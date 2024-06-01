@@ -31,15 +31,24 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
 CHUNK = 1024
+
 # Durée de l'enregistrement avant la transcription
 RECORD_SECONDS = 30
 if DEBUG:
     RECORD_SECONDS = 5
 
+# Contexte pour aider la transcription
+CONTEXT_PROMPT = "Enregistrement d une partie de jeu de role de type Dongeon et Dragons."
+CUSTOM_VOCABULARY = ["MJ", "prompt", "contexte"]
+
 class Transcriptor:
-    def __init__(self):
+    def __init__(self, context_prompt=CONTEXT_PROMPT, custom_vocabulary=CUSTOM_VOCABULARY):
         # Initialisation de PyAudio
         self.audio = pyaudio.PyAudio()
+
+        # Contexte pour aider la transcription
+        self.context_prompt = context_prompt
+        self.custom_vocabulary = custom_vocabulary
 
         # Charger le fichier .env
         load_dotenv()
@@ -56,6 +65,9 @@ class Transcriptor:
 
     def get_transcription(self):
         return self.transcription
+
+    def get_last_transcription(self):
+        return self.last_transcription
 
     # Fonction pour enregistrer un segment audio et le fournir en sortie
     def __record_segment(self):
@@ -137,6 +149,11 @@ class Transcriptor:
             print(f"Erreur lors de la requête : {e}")
             return None
 
+    def transcribe_from_file(self, file_path):
+        with open(file_path, "rb") as audio_file:
+            audio_content = audio_file.read()
+            return self.__transcribe(audio_content)
+
     def __transcribe(self, audio_content):
         headers = {
             "x-gladia-key": os.getenv("GLADIA_API_KEY"),
@@ -157,8 +174,15 @@ class Transcriptor:
 
         data = {
             "audio_url": audio_url,
+            "context_prompt": self.context_prompt,
+            "custom_vocabulary": self.custom_vocabulary,
             "diarization": True,
-        }
+            "diarization_config": {
+                "number_of_speakers": 3,
+                "min_speakers": 1,
+                "max_speakers": 4
+                },
+            }
 
         headers["Content-Type"] = "application/json"
 
@@ -185,9 +209,26 @@ class Transcriptor:
             time.sleep(1)
 
         result = poll_response.get("result")
-        transcription = result.get("transcription").get("full_transcript")
+        if DEBUG:
+            self.debug_result = result
+        transcription = self.get_dialog_from_json(result)
         return transcription
 
+
+    def get_dialog_from_json(self, response):
+        dialog = "- "
+        utterances = response.get("transcription").get("utterances")
+        speaker = 0
+        for utterance in utterances:
+            # Retour à la ligne si changement de speaker
+            if utterance.get("speaker") != speaker:
+                dialog += "\n- "
+                speaker = utterance.get("speaker")
+            # Ajout de l'utterance à la chaîne de dialogue
+            dialog += utterance.get("text") + " "
+        # Retour à la ligne pour terminer la chaîne de dialogue
+        dialog += "\n"
+        return dialog
 
 transcriptor = Transcriptor()
 
@@ -205,6 +246,12 @@ async def stop_recording(background_tasks: BackgroundTasks):
 async def get_transcription():
     transcription = transcriptor.get_transcription()
     return {"transcription": transcription}
+
+@app.get("/last_transcription")
+async def get_last_transcription():
+    last_transcription = transcriptor.get_last_transcription()
+    return {"last_transcription": last_transcription}
+
 
 if __name__ == "__main__":
     import uvicorn
