@@ -2,57 +2,183 @@ import pyaudio
 import wave
 import time
 import threading
+import requests
+import os
+from dotenv import load_dotenv
+from io import BytesIO
 
-# Paramètres de l'enregistrement
+# Paramètres de l'enregistrement audio
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
 CHUNK = 1024
-RECORD_SECONDS = 10
+# Durée de l'enregistrement avant la transcription
+RECORD_SECONDS = 30
 
-# Initialisation de PyAudio
-audio = pyaudio.PyAudio()
+class Transcriptor:
+    def __init__(self):
+        # Initialisation de PyAudio
+        self.audio = pyaudio.PyAudio()
 
-# Fonction pour enregistrer un segment audio
-def record_segment(start_time):
-    stream = audio.open(format=FORMAT, channels=CHANNELS,
-                        rate=RATE, input=True,
-                        frames_per_buffer=CHUNK)
-    frames = []
+        # Charger le fichier .env
+        load_dotenv()
 
-    for _ in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-        data = stream.read(CHUNK)
-        frames.append(data)
+        # Variable de classe contenant la transcription complète
+        self.transcription = ""
+        # Variable de classe contenant la dernière transcription
+        self.last_transcription = ""
+        # Variable de classe permettant de savoir si l'enregistrement est actif
+        self.active = False
 
-    end_time = time.time()
-    filename = f"{start_time:.0f}_{end_time:.0f}.wav"
-    wf = wave.open(filename, 'wb')
-    wf.setnchannels(CHANNELS)
-    wf.setsampwidth(audio.get_sample_size(FORMAT))
-    wf.setframerate(RATE)
-    wf.writeframes(b''.join(frames))
-    wf.close()
+        # Variable de classe avec les threads en cours
+        self.threads = []
 
-    stream.stop_stream()
-    stream.close()
+    def get_transcription(self):
+        return self.transcription
 
-# Fonction pour gérer l'enregistrement continu
-def continuous_recording_thread():
-    while True:
-        start_time = time.time()
-        threading.Thread(target=record_segment, args=(start_time,)).start()
-        time.sleep(RECORD_SECONDS)
+    # Fonction pour enregistrer un segment audio et le fournir en sortie
+    def __record_segment(self):
+        stream = self.audio.open(format=FORMAT, channels=CHANNELS,
+                                 rate=RATE, input=True,
+                                 frames_per_buffer=CHUNK)
+        frames = []
 
-def continuous_recording():
-    while True:
-        start_time = time.time()
-        record_segment(start_time)
+        for _ in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+            data = stream.read(CHUNK)
+            frames.append(data)
+            # Ajout d'un arrêt en cas de is_active passé à False
+            if not self.active:
+                break
 
+        # Création d'un fichier WAV en mémoire
+        output = BytesIO()
+        wf = wave.open(output, 'wb')
+        wf.setnchannels(CHANNELS)
+        wf.setsampwidth(self.audio.get_sample_size(FORMAT))
+        wf.setframerate(RATE)
+        wf.writeframes(b''.join(frames))
+        wf.close()
+
+        stream.stop_stream()
+        stream.close()
+
+        # Repositionner le curseur au début du fichier BytesIO
+        output.seek(0)
+        
+        return output
+
+    def start(self):
+        def transcribe_thread(audio_segment):
+            # Ajout du thread dans la liste des threads en cours
+            self.threads.append(threading.current_thread())
+
+            transcription = self.__transcribe(audio_segment)
+            self.transcription += transcription
+            self.last_transcription = transcription
+
+            # Suppression du thread de la liste des threads en cours
+            self.threads.remove(threading.current_thread())
+
+        def main_tread():
+            # Ajout du thread dans la liste des threads en cours
+            self.threads.append(threading.current_thread())
+
+            while self.active:
+                conversation = self.__record_segment()
+                threading.Thread(target=transcribe_thread, args=(conversation,)).start()
+            
+            # Suppression du thread de la liste des threads en cours
+            self.threads.remove(threading.current_thread())
+
+        self.active = True
+        threading.Thread(target=main_tread, args=()).start()
+
+
+    def stop(self):
+        # Arrêt de l'enregistrement
+        self.active = False
+
+        # Attente de la fin des threads en cours
+        while len(self.threads) > 0:
+            time.sleep(1)
+
+    def __make_request(self, url, headers, method="GET", data=None, files=None):
+        try:
+            if method == "POST":
+                response = requests.post(url, headers=headers, json=data, files=files)
+            else:
+                response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"Erreur lors de la requête : {e}")
+            return None
+
+    def __transcribe(self, audio_content):
+        headers = {
+            "x-gladia-key": os.getenv("GLADIA_API_KEY"),
+            "accept": "application/json",
+        }
+
+        files = [("audio", ("conversation.wav", audio_content, "audio/wav"))]
+
+        upload_response = self.__make_request(
+            "https://api.gladia.io/v2/upload/", headers, "POST", files=files
+        )
+        if not upload_response:
+            return "Erreur lors de l'upload de l'audio."
+
+        audio_url = upload_response.get("audio_url")
+        if not audio_url:
+            return "Erreur : URL de l'audio non trouvée."
+
+        data = {
+            "audio_url": audio_url,
+            "diarization": True,
+        }
+
+        headers["Content-Type"] = "application/json"
+
+        post_response = self.__make_request(
+            "https://api.gladia.io/v2/transcription/", headers, "POST", data=data
+        )
+        if not post_response:
+            return "Erreur lors de la transcription."
+
+        result_url = post_response.get("result_url")
+        if not result_url:
+            return "Erreur : URL du résultat non trouvée."
+
+        while True:
+            poll_response = self.__make_request(result_url, headers)
+            if not poll_response:
+                return "Erreur lors du polling du résultat."
+
+            if poll_response.get("status") == "done":
+                break
+            elif poll_response.get("status") == "error":
+                print("Une erreur est survenue")
+                return poll_response.get("message")
+            time.sleep(1)
+
+        result = poll_response.get("result")
+        transcription = result.get("transcription").get("full_transcript")
+        return transcription
 
 # Démarrer l'enregistrement continu
 if __name__ == "__main__":
+    transcriptor = Transcriptor()
+    transcriptor.start()
+
+    print("Appuyez sur Ctrl+C pour arreter l'enregistrement")
+    # Attendre que l'utilisateur fasse Ctrl+C
     try:
-        continuous_recording()
+        while True:
+            time.sleep(1)
     except KeyboardInterrupt:
-        print("Enregistrement arrêté.")
-        audio.terminate()
+        pass
+
+    transcriptor.stop()
+
+    print("Voici la transcription :")
+    print(transcriptor.get_transcription())
