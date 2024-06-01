@@ -9,6 +9,10 @@ from dotenv import load_dotenv
 from io import BytesIO
 import requests
 
+from utils import processing
+
+
+
 app = FastAPI()
 
 # Ajout du middleware CORS
@@ -94,6 +98,7 @@ class Transcriptor:
             self.last_transcription = transcription
             if DEBUG:
                 print("DEBUG ----" + transcription)
+                processing.ProcessChunk(input_string=transcription)
 
             # Suppression du thread de la liste des threads en cours
             self.threads.remove(threading.current_thread())
