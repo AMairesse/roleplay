@@ -1,5 +1,3 @@
 from utils import processing
 
-db=processing.process_chunk("Exemple_audio")
-for resume in db.audio_resume:
-    print(resume)
+db=processing.process_chunk(file_path_input="data/audio_input_to_process/", file_path_output="data/resume/")
