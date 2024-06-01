@@ -20,7 +20,16 @@ const MistralComponent = ({ parentVariable }) => {
         messages: [{ role: 'user', content: message }],
       });
 
-      setResponse(JSON.stringify(chatResponse.choices[0].message.content, null, 2));
+      const responseContent = chatResponse.choices[0].message.content;
+      let formattedResponse;
+      try {
+        formattedResponse = JSON.stringify(JSON.parse(responseContent), null, 2);
+      } catch (e) {
+        formattedResponse = responseContent;
+      }
+
+      setResponse(formattedResponse);
+      
     } catch (error) {
       console.error('Error:', error);
       setResponse('An error occurred while fetching the response.');
