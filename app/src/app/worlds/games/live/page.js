@@ -21,11 +21,12 @@ export default function WorldsGamesLive() {
         mediaRecorder.ondataavailable = event => {
           console.log("data available", event);
           audioChunks.push(event.data);
-          if (mediaRecorder.state === 'inactive') {
+          //if (mediaRecorder.state === 'inactive') {
             const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-            sendToGladia(audioBlob);
+            const textTranscription = transcribeAudio(audioBlob);
+            console.log("textTranscription", textTranscription);
             audioChunks = [];
-          }
+          //}
         };
 
         console.log("start audio recording");
@@ -40,34 +41,96 @@ export default function WorldsGamesLive() {
           } else {
             console.log("state is not recoring. Nothing to stop", mediaRecorder.state);
           }
-        }, 5000); // 15 seconds
+        }, 10000); // 10 seconds
       } catch (error) {
         console.error('Error accessing microphone:', error);
       }
     }
 
-    async function sendToGladia(audioBlob) {
-      console.log('Sending audio to Gladia...');
-      const formData = new FormData();
-      formData.append('audio', audioBlob, 'audio.wav');
-
-      console.log('FormData:', formData);
-
-      try {
-        const response = await fetch('https://api.gladia.io/transcription', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Authorization': 'c5e95c51-c819-417a-96e5-c6b805fab962'
-          }
-        });
-        const result = await response.json();
-        console.log('Result:', result);
-        setTranscriptions(prev => [...prev, result.transcription]);
-      } catch (error) {
-        console.error('Error sending audio to Gladia:', error);
+    async function pollForResult(resultUrl, headers) {
+      while (true) {
+        console.log("Polling for results...");
+        const pollResponse = await fetch(resultUrl, {
+          method: "GET",
+          headers: headers }
+        ).then((res) => res.json());
+    
+        if (pollResponse.status === "done") {
+          console.log("- Transcription done: \n ");
+          console.log(pollResponse.result.transcription.full_transcript);
+          setTranscriptions(prev => [...prev, pollResponse.result.transcription.full_transcript]);
+          return pollResponse.result.transcription.full_transcript;
+        } else {
+          console.log("Transcription status : ", pollResponse.status);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
       }
     }
+
+    async function transcribeAudio(audioBlob) {
+      const gladiaKey = "c5e95c51-c819-417a-96e5-c6b805fab962";
+      const uploadUrl = "https://api.gladia.io/v2/upload/";
+      const transcriptionUrl = "https://api.gladia.io/v2/transcription/";
+  
+      // Step 1: Upload the audio file
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'conversation.wav');
+  
+      const uploadResponse = await fetch(uploadUrl, {
+          method: 'POST',
+          headers: {
+              'x-gladia-key': gladiaKey,
+              'accept': 'application/json'
+          },
+          body: formData
+      }).then(res => res.json());
+  
+      if (!uploadResponse || !uploadResponse.audio_url) {
+          return "Erreur lors de l'upload de l'audio.";
+      }
+  
+      const audioUrl = uploadResponse.audio_url;
+  
+      // Step 2: Request transcription
+      const transcriptionData = {
+          audio_url: audioUrl,
+          context_prompt: "Enregistrement d une partie de jeu de role de type Dongeon et Dragons.",
+          custom_vocabulary: ["MJ", "prompt", "contexte"],
+          diarization: true,
+          diarization_config: {
+              number_of_speakers: 3,
+              min_speakers: 1,
+              max_speakers: 4
+          }
+      };
+  
+      const transcriptionResponse = await fetch(transcriptionUrl, {
+          method: 'POST',
+          headers: {
+              'x-gladia-key': gladiaKey,
+              'accept': 'application/json',
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(transcriptionData)
+      }).then(res => res.json());
+  
+      if (!transcriptionResponse || !transcriptionResponse.result_url) {
+          return "Erreur lors de la transcription.";
+      }
+  
+      const resultUrl = transcriptionResponse.result_url;
+  
+      // Step 3: Poll for the transcription result
+      // Define headers
+      const headers = {
+          'x-gladia-key': gladiaKey,
+          'accept': 'application/json'
+      };
+
+      const result = await pollForResult(resultUrl, headers);
+      return result; // Assuming result contains the transcription text
+  }
+  
     console.log('---');
     getMicrophoneAccess();
   }, []);
