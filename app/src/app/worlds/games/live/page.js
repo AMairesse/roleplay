@@ -5,7 +5,7 @@ export default function WorldsGamesLive() {
   const [players, setPlayers] = useState([]);
   const [conditions, setConditions] = useState("Jour");
   const [place, setPlace] = useState("Tour du mage fou");
-  const [image, setImage] = useState('https://assetsio.gnwcdn.com/pathfinder-2e-rpg-artwork.jpg?width=1600&height=900&fit=crop&quality=100&format=png&enable=upscale&auto=webp');
+  const [image, setImage] = useState('https://cdn.1j1ju.com/thumbs/game-lg/medias/36/28/18-pathfinder-le-jeu-de-role-boite-dinitiation-cover.jpeg');
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -33,14 +33,16 @@ export default function WorldsGamesLive() {
               <div className="rounded-lg bg-cover block absolute" style={{
                 backgroundImage: `url(${image})`,
                 opacity: "0.2",
-                top: "-4px",
-                left: "-4px",
+                top: "-2px",
+                left: "-2px",
                 height: "calc(100% + 4px)",
                 width: "calc(100% + 4px)"
               }} />
               <div className="top-0 left-0 rounded-lg h-full w-full bg-cover block absolute" style={{
                 backgroundImage: `url(${image})`,
-                margin: "2px"
+                margin: "2px",
+                height: "calc(100% - 4px)",
+                width: "calc(100% - 4px)"
               }} />
             </div>
           )}
