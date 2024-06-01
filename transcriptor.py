@@ -24,7 +24,7 @@ app.add_middleware(
     allow_headers=["*"],  # Permettre tous les en-têtes
 )
 
-DEBUG = True
+DEBUG = False
 
 # Paramètres de l'enregistrement audio
 FORMAT = pyaudio.paInt16
@@ -33,7 +33,7 @@ RATE = 44100
 CHUNK = 1024
 
 # Durée de l'enregistrement avant la transcription
-RECORD_SECONDS = 30
+RECORD_SECONDS = 15
 if DEBUG:
     RECORD_SECONDS = 5
 
