@@ -1,11 +1,26 @@
+from fastapi import FastAPI, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
+import threading
+import time
 import pyaudio
 import wave
-import time
-import threading
-import requests
 import os
 from dotenv import load_dotenv
 from io import BytesIO
+import requests
+
+app = FastAPI()
+
+# Ajout du middleware CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permettre toutes les origines, à ajuster selon vos besoins
+    allow_credentials=True,
+    allow_methods=["*"],  # Permettre toutes les méthodes HTTP
+    allow_headers=["*"],  # Permettre tous les en-têtes
+)
+
+DEBUG = True
 
 # Paramètres de l'enregistrement audio
 FORMAT = pyaudio.paInt16
@@ -14,6 +29,8 @@ RATE = 44100
 CHUNK = 1024
 # Durée de l'enregistrement avant la transcription
 RECORD_SECONDS = 30
+if DEBUG:
+    RECORD_SECONDS = 5
 
 class Transcriptor:
     def __init__(self):
@@ -75,11 +92,13 @@ class Transcriptor:
             transcription = self.__transcribe(audio_segment)
             self.transcription += transcription
             self.last_transcription = transcription
+            if DEBUG:
+                print("DEBUG ----" + transcription)
 
             # Suppression du thread de la liste des threads en cours
             self.threads.remove(threading.current_thread())
 
-        def main_tread():
+        def main_thread():
             # Ajout du thread dans la liste des threads en cours
             self.threads.append(threading.current_thread())
 
@@ -91,8 +110,7 @@ class Transcriptor:
             self.threads.remove(threading.current_thread())
 
         self.active = True
-        threading.Thread(target=main_tread, args=()).start()
-
+        threading.Thread(target=main_thread, args=()).start()
 
     def stop(self):
         # Arrêt de l'enregistrement
@@ -165,20 +183,24 @@ class Transcriptor:
         transcription = result.get("transcription").get("full_transcript")
         return transcription
 
-# Démarrer l'enregistrement continu
+
+transcriptor = Transcriptor()
+
+@app.post("/start")
+async def start_recording(background_tasks: BackgroundTasks):
+    background_tasks.add_task(transcriptor.start)
+    return {"message": "Enregistrement démarré"}
+
+@app.post("/stop")
+async def stop_recording(background_tasks: BackgroundTasks):
+    background_tasks.add_task(transcriptor.stop)
+    return {"message": "Enregistrement arrêté"}
+
+@app.get("/transcription")
+async def get_transcription():
+    transcription = transcriptor.get_transcription()
+    return {"transcription": transcription}
+
 if __name__ == "__main__":
-    transcriptor = Transcriptor()
-    transcriptor.start()
-
-    print("Appuyez sur Ctrl+C pour arreter l'enregistrement")
-    # Attendre que l'utilisateur fasse Ctrl+C
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        pass
-
-    transcriptor.stop()
-
-    print("Voici la transcription :")
-    print(transcriptor.get_transcription())
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

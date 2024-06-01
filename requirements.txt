@@ -8,4 +8,5 @@ langchain_openai
 sentence-transformers==2.2.2
 InstructorEmbedding
 langchain_groq
-
+fastapi
+uvicorn
