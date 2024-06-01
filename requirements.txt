@@ -1,3 +1,11 @@
 requests
 python-dotenv
 pyaudio
+langchain
+langchain_community
+langchain_core
+langchain_openai
+sentence-transformers==2.2.2
+InstructorEmbedding
+langchain_groq
+
