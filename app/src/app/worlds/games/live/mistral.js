@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MistralClient from '@mistralai/mistralai';
+import 'tailwindcss/tailwind.css';
 
 const MistralComponent = ({ parentVariable }) => {
   const [content, setContent] = useState('');
@@ -29,7 +30,7 @@ const MistralComponent = ({ parentVariable }) => {
       }
 
       setResponse(formattedResponse);
-      
+
     } catch (error) {
       console.error('Error:', error);
       setResponse('An error occurred while fetching the response.');
@@ -37,22 +38,23 @@ const MistralComponent = ({ parentVariable }) => {
   };
 
   return (
-    <div>
-      <h1>Mistral Chat</h1>
+    <div className="container mx-auto mt-5 p-4 bg-gray-900 text-white rounded-lg">
+      <h1 className="text-2xl font-bold mb-4">Mistral Chat</h1>
       <form onSubmit={(e) => { e.preventDefault(); getBestFrenchMeal(); }}>
-        <label>
-          Enter your message:
+        <div className="mb-3">
+          <label htmlFor="userMessage" className="form-label block mb-2">Enter your message:</label>
           <input
             type="text"
-            className="text-gray-900"
+            className="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-900"
+            id="userMessage"
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
-        </label>
-        <button type="submit">Get Response</button>
+        </div>
+        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600">Get Response</button>
       </form>
-      <h2>Response:</h2>
-      <pre>{response}</pre>
+      <h2 className="text-xl font-semibold mt-4">Response:</h2>
+      <pre className="bg-gray-800 text-white p-3 border rounded whitespace-pre-wrap">{response}</pre>
     </div>
   );
 };
