@@ -14,7 +14,6 @@ export default function WorldsGamesLive() {
 
   useEffect(() => {
     async function getMicrophoneAccess() {
-      console.log('Getting microphone access...');
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         const mediaRecorder = new MediaRecorder(stream);
@@ -22,29 +21,22 @@ export default function WorldsGamesLive() {
         let audioChunks = [];
 
         mediaRecorder.ondataavailable = event => {
-          console.log("data available", event);
           audioChunks.push(event.data);
-          //if (mediaRecorder.state === 'inactive') {
           const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
           const textTranscription = transcribeAudio(audioBlob);
-          console.log("textTranscription", textTranscription);
+          console.log("Transcription:", textTranscription);
           audioChunks = [];
-          //}
         };
-
-        console.log("start audio recording");
 
         mediaRecorder.start();
         setInterval(() => {
           if (mediaRecorder.state === 'recording') {
-            console.log("stop audio recording");
             mediaRecorder.stop();
-            console.log("and start again");
             mediaRecorder.start();
           } else {
             console.log("state is not recoring. Nothing to stop", mediaRecorder.state);
           }
-        }, 10000); // 10 seconds
+        }, 5000); // 5 seconds
       } catch (error) {
         console.error('Error accessing microphone:', error);
       }
@@ -52,7 +44,6 @@ export default function WorldsGamesLive() {
 
     async function pollForResult(resultUrl, headers) {
       while (true) {
-        console.log("Polling for results...");
         const pollResponse = await fetch(resultUrl, {
           method: "GET",
           headers: headers
@@ -60,12 +51,9 @@ export default function WorldsGamesLive() {
         ).then((res) => res.json());
 
         if (pollResponse.status === "done") {
-          console.log("- Transcription done: \n ");
-          console.log(pollResponse.result.transcription.full_transcript);
           setTranscriptions(prev => [...prev, pollResponse.result.transcription.full_transcript]);
           return pollResponse.result.transcription.full_transcript;
         } else {
-          console.log("Transcription status : ", pollResponse.status);
           await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
