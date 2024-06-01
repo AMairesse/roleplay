@@ -12,6 +12,13 @@ Fonctionnalités prévues :
 - Génération régulière d'un visuel de la partie
 
 
+# Architecture
+
+Le frontend est en Node. Le backend est en Python.
+
+
+
+
 # FAQ
 
 Utilisation de pyaudio sur MacOS  : nécessite d'installer "portaudio" par exemple par la commande "brew install portaudio"
