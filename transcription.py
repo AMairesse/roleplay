@@ -20,19 +20,20 @@ def transcribe_file(file_path):
     if not os.path.exists(file_path):
         raise Exception("File not found")
 
-    file_name, file_extension = os.path.splitext(
-        file_path
-    )  # Get your audio file name + extension
+    file_name, file_extension = os.path.splitext(file_path)
 
-    with open(file_path, "rb") as f:  # Open the file
-        file_content = f.read()  # Read the content of the file
+    with open(file_path, "rb") as f:
+        file_content = f.read()
 
+    return transcribe(audio_content=file_content)
+
+def transcribe(audio_content):
     headers = {
         "x-gladia-key": os.getenv("GLADIA_API_KEY", os.getenv("GLADIA_API_KEY")),
         "accept": "application/json",
     }
 
-    files = [("audio", (file_path, file_content, "audio/" + file_extension[1:]))]
+    files = [("audio", ("conversation.wav", audio_content, "audio/" + "wav"))]
 
     upload_response = make_request(
         "https://api.gladia.io/v2/upload/", headers, "POST", files=files
