@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import MistralComponent from './mistral';
 
 export default function WorldsGamesLive() {
   const [players, setPlayers] = useState([]);
@@ -182,6 +183,7 @@ export default function WorldsGamesLive() {
             ))}
           </ul>
         </div>
+        <MistralComponent parentVariable={transcriptions} />
       </div>
     </div>
   );
