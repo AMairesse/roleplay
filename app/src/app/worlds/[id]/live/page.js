@@ -42,7 +42,16 @@ export default function EditWorld() {
       dispatch({ type: 'SET_SCENES', payload: scenes });
     } else {
       // add new one
-      const newScene = { index: scenes.length, name: "", place: "", actors: [], images: [], ...scene };
+      const newScene = {
+        type: "image",
+        loading: false,
+        index: scenes.length,
+        name: "",
+        place: "",
+        actors: [],
+        images: [],
+        ...scene
+      };
       dispatch({ type: 'SET_SCENES', payload: [...scenes, newScene] });
     }
   }
