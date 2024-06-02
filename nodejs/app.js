@@ -3,7 +3,7 @@ const axios = require('axios');
 const path = require('path');
 
 const app = express();
-const port = 3000; // Change the port to 3000
+const port = 3003; // Change the port to 3000
 
 // Set up the views directory
 app.set('views', path.join(__dirname, 'views'));

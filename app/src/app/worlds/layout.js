@@ -59,7 +59,6 @@ export default function ApplicationLayout({ events, children, navbar }) {
 
   const fetchWorlds = async () => {
     const data = await getWorlds();
-    console.log("data", data);
     if (data.length) {
       dispatch({ type: 'SET_CURRENT_WORLD', payload: data[0] });
     }
@@ -73,7 +72,6 @@ export default function ApplicationLayout({ events, children, navbar }) {
       router.push('/login');
       return;
     }
-    console.log("user", user);
 
     if (!currentWorld) fetchWorlds();
   }, []);
@@ -92,7 +90,7 @@ export default function ApplicationLayout({ events, children, navbar }) {
               </DropdownButton>
               <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
                 {worlds.map(world => (
-                  <DropdownItem href={`/worlds/${world.id}`}>
+                  <DropdownItem href={`/worlds/${world.id}`} key={`world-dropdow-${world.id}`}>
                     <DropdownLabel>{world.name}</DropdownLabel>
                   </DropdownItem>
                 ))}
@@ -131,10 +129,12 @@ export default function ApplicationLayout({ events, children, navbar }) {
 
 
             <SidebarSection>
-              <SidebarItem href="#">
-                <i className="fas fa-shield-halved" />
-                <SidebarLabel>Politique de confidentialité</SidebarLabel>
-              </SidebarItem>
+              {/*
+                <SidebarItem href="#">
+                  <i className="fas fa-shield-halved" />
+                  <SidebarLabel>Politique de confidentialité</SidebarLabel>
+                </SidebarItem>
+              */}
               <SidebarItem href="#">
                 <i className="fas fa-comment-dots" />
                 <SidebarLabel>Donner son avis</SidebarLabel>

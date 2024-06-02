@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { createWorld, deleteWorld } from '@/utils/directus';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/button'
 import { Checkbox, CheckboxField } from '@/components/checkbox'
@@ -13,6 +14,7 @@ import { Text } from '@/components/text'
 import { Textarea } from '@/components/textarea'
 
 export default function FormCreateWorlds({ onDelete, onClose, world, ready }) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [background, setBackground] = useState('');
@@ -101,7 +103,7 @@ export default function FormCreateWorlds({ onDelete, onClose, world, ready }) {
       <div className="justify-center flex flex-col gap-4 items-center mt-20">
         <button
           className="rounded-full text-3xl bg-red-500 cursor-pointer h-20 w-20 hover:scale-110 ease-in-out duration-200 drop-shadow-md hover:drop-shadow-xl"
-          onClick={() => router.push(`/worlds/${currentWorld.id}/live`)}
+          onClick={() => router.push(`/worlds/${world.id}/live`)}
         >
           <i className="fas fa-microphone" />
         </button>

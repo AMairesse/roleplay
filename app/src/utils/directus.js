@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createDirectus, authentication, rest, registerUser, readItems, readMe, createItem, refresh, readItem } from '@directus/sdk';
+import { createDirectus, authentication, rest, updateSingleton, registerUser, readItems, readMe, createItem, refresh, readItem } from '@directus/sdk';
 
 const API_URL = "https://data.rpg.coraye.com/";
 let client = null
@@ -62,6 +62,11 @@ export const createWorld = async data => {
     status: "published",
     ...data
   }));
+};
+
+export const updateWorld = async data => {
+  await client.setToken(localStorage.getItem('token'));
+  const result = await client.request(updateSingleton('Worlds', data));
 };
 
 export const deleteWorld = async data => {

@@ -13,9 +13,7 @@ export default function EditWorld({ params }) {
   const { currentWorld } = useGlobalState();
 
   const fetchWorld = async () => {
-    console.log("EditWorld params", params.id);
     const data = await getWorld(params.id);
-    console.log("EditWorld data", data);
     dispatch({ type: 'SET_CURRENT_WORLD', payload: data });
   };
 

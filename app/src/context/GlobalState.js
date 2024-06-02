@@ -14,6 +14,16 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'SET_CURRENT_SCENE':
+      return {
+        ...state,
+        currentScene: action.payload,
+      };
+    case 'SET_SCENES':
+      return {
+        ...state,
+        scenes: action.payload,
+      };
     case 'SET_CURRENT_WORLD':
       return {
         ...state,
