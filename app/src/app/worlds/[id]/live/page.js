@@ -14,7 +14,7 @@ import { transcribeAudio } from "@/utils/transcript";
 import { generateContext, generateImage } from "@/utils/mistral";
 import { updateWorld } from '@/utils/directus';
 
-const batchSize = 1;
+const batchSize = 3;
 
 export default function EditWorld() {
   const router = useRouter();
