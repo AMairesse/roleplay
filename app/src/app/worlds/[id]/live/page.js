@@ -61,8 +61,6 @@ export default function EditWorld() {
         imageb64: [],
         ...scene
       };
-      console.log("currentWorld", currentWorld);
-      console.log("currentWorld.scenes", currentWorld.scenes);
       if (currentWorld?.scenes?.length) currentWorld.scenes.push(newScene);
       else currentWorld.scenes = [newScene];
       return dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });

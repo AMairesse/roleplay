@@ -43,9 +43,9 @@ export const getWorlds = async () => {
   );
   console.log("result", result);
   result.forEach(r => {
-    if (!r.scenes) [];
+    if (!r.scenes) r.scenes = [];
     else if (typeof r.scenes === "string") {
-      r.scenes = JSON.parse(r.scenes || []);
+      r.scenes = JSON.parse(r.scenes);
     }
   })
   return result;
@@ -58,7 +58,10 @@ export const getWorld = async id => {
   		fields: ['*', "*.games", "*.games.*"]
   	})
   );
-  result.scenes = JSON.parse(result.scenes || []);
+  if (result.scenes) {
+    result.scenes = JSON.parse(result.scenes || []);
+  } else result.scenes = [];
+
   return result;
 };
 
@@ -75,17 +78,13 @@ export const createWorld = async data => {
 export const updateWorld = async data => {
   await client.setToken(localStorage.getItem('token'));
   console.log("data", data);
-  if (typeof data.scenes === "string") {
-    data.scenes = JSON.parse(data.scenes || []);
-  }
-  if (typeof data.scenes !== "string") data.scenes = JSON.stringify(data.scenes || []);
 
   const result = await client.request(updateItems('Worlds', [data.id], {
     name: data.name,
     background: data.background,
     style: data.style,
     image_style: data.image_style,
-    scenes: data.scenes
+    scenes: typeof data.scenes === "string" ? data.scenes : JSON.stringify(data.scenes)
   }));
 };
 
