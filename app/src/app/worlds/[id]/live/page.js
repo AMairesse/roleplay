@@ -15,7 +15,7 @@ import { generateContext, generateImage } from "@/utils/mistral";
 import { updateWorld } from '@/utils/directus';
 import Scene from '@/components/scene';
 
-const batchSize = 1;
+const batchSize = 3;
 
 export default function EditWorld() {
   const router = useRouter();
