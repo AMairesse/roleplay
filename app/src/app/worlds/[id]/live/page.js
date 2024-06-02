@@ -47,6 +47,7 @@ export default function EditWorld() {
       // update existing one
       currentWorld.scenes[index] = scene;
       dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });
+      dispatch({ type: 'SET_CURRENT_SCENE', payload: scene });
     } else {
       // add new one
       const newScene = {
@@ -60,6 +61,7 @@ export default function EditWorld() {
         ...scene
       };
       currentWorld.scenes.push(newScene);
+      dispatch({ type: 'SET_CURRENT_SCENE', payload: scene });
       return dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });
     }
   };
