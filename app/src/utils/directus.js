@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createDirectus, authentication, rest, updateSingleton, registerUser, readItems, readMe, createItem, refresh, readItem, deleteItem } from '@directus/sdk';
+import { createDirectus, authentication, rest, updateSingleton, registerUser, readItems, readMe, createItem, refresh, readItem, deleteItem, updateItems } from '@directus/sdk';
 
 const API_URL = "https://data.rpg.coraye.com/";
 let client = null
@@ -41,8 +41,12 @@ export const getWorlds = async () => {
 				}
   	})
   );
+  console.log("result", result);
   result.forEach(r => {
-    r.scenes = JSON.parse(r.scenes || []);
+    if (!r.scenes) [];
+    else if (typeof r.scenes === "string") {
+      r.scenes = JSON.parse(r.scenes || []);
+    }
   })
   return result;
 };
@@ -70,8 +74,19 @@ export const createWorld = async data => {
 
 export const updateWorld = async data => {
   await client.setToken(localStorage.getItem('token'));
-  data.scenes = JSON.stringify(data.scenes);
-  const result = await client.request(updateSingleton('Worlds', data));
+  console.log("data", data);
+  if (typeof data.scenes === "string") {
+    data.scenes = JSON.parse(data.scenes || []);
+  }
+  if (typeof data.scenes !== "string") data.scenes = JSON.stringify(data.scenes || []);
+
+  const result = await client.request(updateItems('Worlds', [data.id], {
+    name: data.name,
+    background: data.background,
+    style: data.style,
+    image_style: data.image_style,
+    scenes: data.scenes
+  }));
 };
 
 export const deleteWorld = async data => {

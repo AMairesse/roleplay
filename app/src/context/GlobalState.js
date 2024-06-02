@@ -21,6 +21,8 @@ const reducer = (state, action) => {
         currentScene: action.payload,
       };
     case 'SET_CURRENT_WORLD':
+      console.log("SET_CURRENT_WORLD", action.payload);
+      updateWorld(action.payload);
       return {
         ...state,
         currentWorld: action.payload,

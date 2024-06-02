@@ -111,7 +111,7 @@ export default function ApplicationLayout({ events, children, navbar }) {
 
           <SidebarBody>
             <SidebarSection>
-              {(currentWorld?.scenes || []).map(scene => (
+              {currentWorld && (currentWorld?.scenes || []).map(scene => (
                 <SidebarItem
                   key={scene.index}
                   current={currentScene && scene.index === currentScene.index}
