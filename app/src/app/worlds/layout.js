@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation';
 import { useGlobalState, useGlobalDispatch } from '@/context/GlobalState';
 
-import { Avatar } from '@/components/avatar'
+import { Avatar } from '@/components/avatar';
 import {
   Dropdown,
   DropdownButton,
@@ -12,8 +12,8 @@ import {
   DropdownItem,
   DropdownLabel,
   DropdownMenu,
-} from '@/components/dropdown'
-import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '@/components/navbar'
+} from '@/components/dropdown';
+import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '@/components/navbar';
 import {
   Sidebar,
   SidebarBody,
@@ -24,8 +24,8 @@ import {
   SidebarLabel,
   SidebarSection,
   SidebarSpacer,
-} from '@/components/sidebar'
-import { SidebarLayout } from '@/components/sidebar-layout'
+} from '@/components/sidebar';
+import { SidebarLayout } from '@/components/sidebar-layout';
 
 import { getWorlds } from '@/utils/directus';
 
@@ -46,7 +46,7 @@ function AccountDropdownMenu({ anchor }) {
         <DropdownLabel>Sign out</DropdownLabel>
       </DropdownItem>
     </DropdownMenu>
-  )
+  );
 }
 
 export default function ApplicationLayout({ events, children, navbar }) {
@@ -66,13 +66,18 @@ export default function ApplicationLayout({ events, children, navbar }) {
     setWorlds(data);
   };
 
+  const handleSceneClick = (scene) => {
+    // dispatch({ type: 'SET_CURRENT_SCENE', payload: scene });
+    dispatch({ type: 'SET_CURRENT_SCENE', payload: scene });
+  };
+
   useEffect(() => {
-    // Vérifier si l'utilisateur est authentifié
-    const user = JSON.parse(localStorage.getItem('user') || "");
-    if (!user) {
-      router.push('/login');
-      return;
-    }
+    // Check if the user is authenticated
+    // const user = JSON.parse(localStorage.getItem('user') || "");
+    // if (!user) {
+    //   router.push('/login');
+    //   return;
+    // }
 
     if (!currentWorld) fetchWorlds();
   }, [currentWorld]);
@@ -82,65 +87,67 @@ export default function ApplicationLayout({ events, children, navbar }) {
       navbar={[]}
       sidebar={
         <Sidebar>
-        {currentWorld && (
-          <SidebarHeader>
-            <Dropdown>
-              <DropdownButton as={SidebarItem}>
-                <SidebarLabel>{currentWorld.name}</SidebarLabel>
-                <i className="fas fa-chevron-down" />
-              </DropdownButton>
-              <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
-                {worlds.map(world => (
-                  <DropdownItem href={`/worlds/${world.id}`} key={`world-dropdow-${world.id}`}>
-                    <DropdownLabel>{world.name}</DropdownLabel>
+          {currentWorld && (
+            <SidebarHeader>
+              <Dropdown>
+                <DropdownButton as={SidebarItem}>
+                  <SidebarLabel>{currentWorld.name}</SidebarLabel>
+                  <i className="fas fa-chevron-down" />
+                </DropdownButton>
+                <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
+                  {worlds.map(world => (
+                    <DropdownItem href={`/worlds/${world.id}`} key={`world-dropdow-${world.id}`}>
+                      <DropdownLabel>{world.name}</DropdownLabel>
+                    </DropdownItem>
+                  ))}
+                  <DropdownDivider />
+                  <DropdownItem href="/worlds/create">
+                    <i className="fas fa-plus mr-2" />
+                    <DropdownLabel>Créer une nouvelle aventure</DropdownLabel>
                   </DropdownItem>
-                ))}
-                <DropdownDivider />
-                <DropdownItem href="/worlds/create">
-                  <i className="fas fa-plus mr-2" />
-                  <DropdownLabel>Créer une nouvelle aventure</DropdownLabel>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </SidebarHeader>
-        )}
+                </DropdownMenu>
+              </Dropdown>
+            </SidebarHeader>
+          )}
 
           <SidebarBody>
             <SidebarSection>
-             {(scenes || []).map(scene => (
-               <SidebarItem current={scene.index === currentScene.index}>
-                 {scene.loading ? (
-                   <svg className="animate-spin -ml-1 mr-1 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                   </svg>
-                 ) : (
-                   <i className="fas fa-image" />
-                 )}
-                 <SidebarLabel>{scene.name}</SidebarLabel>
-               </SidebarItem>
-             ))}
-              {/*
-                <SidebarItem href="/" current={pathname === '/'}>
-                  <svg className="animate-spin -ml-1 mr-1 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <SidebarLabel>Description de la tour</SidebarLabel>
+              {(scenes || []).map(scene => (
+                <SidebarItem
+                  key={scene.index}
+                  current={currentScene && scene.index === currentScene.index}
+                  onClick={() => handleSceneClick(scene)}
+                >
+                  {scene.loading ? (
+                    <svg
+                      className="animate-spin -ml-1 mr-1 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                  ) : (
+                    <i className="fas fa-image" />
+                  )}
+                  <SidebarLabel>{scene.name}</SidebarLabel>
                 </SidebarItem>
-                <SidebarItem href="/" current={pathname === '/'}>
-                  <i className="fas fa-image" />
-                  <SidebarLabel>Passage du pont</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem href="/" current={pathname === '/'}>
-                  <i className="fas fa-image" />
-                  <SidebarLabel>Sortie de la foret</SidebarLabel>
-                </SidebarItem>
-              */}
+              ))}
             </SidebarSection>
 
             <SidebarSpacer />
-
 
             <SidebarSection>
               {/*
@@ -148,10 +155,10 @@ export default function ApplicationLayout({ events, children, navbar }) {
                   <i className="fas fa-shield-halved" />
                   <SidebarLabel>Politique de confidentialité</SidebarLabel>
                 </SidebarItem>
-              <SidebarItem href="#">
-                <i className="fas fa-comment-dots" />
-                <SidebarLabel>Donner son avis</SidebarLabel>
-              </SidebarItem>
+                <SidebarItem href="#">
+                  <i className="fas fa-comment-dots" />
+                  <SidebarLabel>Donner son avis</SidebarLabel>
+                </SidebarItem>
               */}
             </SidebarSection>
           </SidebarBody>
@@ -167,5 +174,5 @@ export default function ApplicationLayout({ events, children, navbar }) {
     >
       {children}
     </SidebarLayout>
-  )
+  );
 }

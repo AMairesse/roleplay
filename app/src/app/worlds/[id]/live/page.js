@@ -1,7 +1,15 @@
+  /** En l'état :
+
+La ligne suivante permet la sélection d'une scène
+dispatch({ type: 'SET_CURRENT_SCENE', payload: newScene });
+
+La ligne suitante permets la mise à jours de toutes les scènes
+dispatch({ type: 'SET_SCENES', payload: [...scenes, newScene] });
+
+*/
 "use client";
 
 import { useEffect, useState } from 'react';
-import { ProtectRoute } from '@/utils/auth';
 import { useRouter } from 'next/navigation';
 import { useGlobalState, useGlobalDispatch } from '@/context/GlobalState';
 import AudioRecorder from "@/utils/audio-recorder";
@@ -9,7 +17,7 @@ import { transcribeAudio } from "@/utils/transcript";
 import { generateContext, generateImage } from "@/utils/mistral";
 import { updateWorld } from '@/utils/directus';
 
-const batchSize = 5;
+const batchSize = 1;
 
 export default function EditWorld() {
   const router = useRouter();
@@ -18,35 +26,24 @@ export default function EditWorld() {
   const [recording, setRecording] = useState(false);
   const [image, setImage] = useState(null);
   const [transcriptions, setTranscriptions] = useState([]);
-  const [batches, setBatches] = useState([]);
   const [recorder] = useState(new AudioRecorder());
-
-  /** En l'état :
-
-  La ligne suivante permet la sélection d'une scène
-  dispatch({ type: 'SET_CURRENT_SCENE', payload: newScene });
-
-  La ligne suitante permets la mise à jours de toutes les scènes
-  dispatch({ type: 'SET_SCENES', payload: [...scenes, newScene] });
-
-  */
 
   const startRecording = () => {
     if (!recording) {
       recorder.start();
       setRecording(true);
     }
-  }
+  };
 
   const stopRecording = () => {
     if (recording) {
       recorder.stop();
       setRecording(false);
     }
-  }
+  };
 
   const saveScene = (scene = {}, index) => {
-    if (index) {
+    if (index !== undefined) {
       // update existing one
       scenes[index] = scene;
       dispatch({ type: 'SET_SCENES', payload: scenes });
@@ -63,13 +60,14 @@ export default function EditWorld() {
         ...scene
       };
       dispatch({ type: 'SET_SCENES', payload: [...scenes, newScene] });
+      dispatch({ type: 'SET_CURRENT_SCENE', payload: newScene }); // Activate this line here
     }
-  }
+  };
 
   // New batch round
   const newBatch = () => {
     const batch = transcriptions.slice(-batchSize);
-    const index = batches.length;
+    const index = scenes.length;
     console.log("newBatch", batch, index);
     // Set rich batch object
     saveScene({
@@ -79,8 +77,8 @@ export default function EditWorld() {
       image: null,
       date: new Date()
     });
-    // Paralellized
-    generateContext({ transcriptions, message: "" })
+    // Parallelized
+    generateContext({ transcriptions: batch, message: "" })
       .then(context => {
         console.log("context", context);
       })
@@ -90,7 +88,7 @@ export default function EditWorld() {
         console.log("image", image);
       })
       .catch(console.error);
-  }
+  };
 
   recorder.onData = blob => {
     transcribeAudio("", blob)
@@ -113,6 +111,11 @@ export default function EditWorld() {
     }
   }, [scenes]);
 
+  const handleSceneClick = (scene) => {
+    // dispatch({ type: 'SET_CURRENT_SCENE', payload: scene });
+    dispatch({ type: 'SET_CURRENT_SCENE', payload: scene });
+  };
+
   return (
     <div className="h-full p-4 relative">
       <div className={`absolute ease-in-out duration-300 justify-center flex flex-col gap-4 top-0 ${recording ? "items-end scale-50 right-0" : "items-center right-1/2 translate-x-1/2"}`}>
@@ -130,16 +133,54 @@ export default function EditWorld() {
         </div>
         {!recording && <span className="text-gray-500">Démarrer l'enregistrement</span>}
       </div>
+
+      <aside className="sidebar">
+        <div className="sidebar-body">
+          {(scenes || []).map((scene) => (
+            <div
+              key={scene.index}
+              className={`sidebar-item ${currentScene && scene.index === currentScene.index ? 'current' : ''}`}
+              onClick={() => handleSceneClick(scene)}
+            >
+              {/* {scene.loading ? (
+                <svg
+                  className="animate-spin -ml-1 mr-1 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              ) : (
+                <i className="fas fa-image" />
+              )}
+              <span>{scene.name}</span> */}
+            </div>
+          ))}
+        </div>
+      </aside>
+
       {currentScene && (
         <section className="flex">
           <div className="flex flex-col gap-5 items-center">
             <div className="p-3 rounded-lg">
               {currentScene.place}
             </div>
-            <h1 className="text-2xl">{currentScene.title}</h1>
+            <h1 className="text-2xl">{currentScene.name}</h1>
             {currentScene.image && (
               <div className="relative" style={{ padding: "2px" }}>
-                {/* <img className="rounded-md opacity-0" src={image} alt="Game scene" /> */}
                 <div className="rounded-lg bg-cover block absolute" style={{
                   backgroundImage: `url(${currentScene.image})`,
                   opacity: "0.2",
@@ -156,6 +197,10 @@ export default function EditWorld() {
                 }} />
               </div>
             )}
+            <div className="p-3 rounded-lg">
+              <p>Date: {currentScene.date ? new Date(currentScene.date).toLocaleString() : ''}</p>
+              <p>Transcriptions: {currentScene.transcriptions.join(', ')}</p>
+            </div>
           </div>
         </section>
       )}
