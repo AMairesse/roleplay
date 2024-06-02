@@ -41,6 +41,9 @@ export const getWorlds = async () => {
 				}
   	})
   );
+  result.forEach(r => {
+    r.scenes = JSON.parse(r.scenes);
+  })
   return result;
 };
 
@@ -51,11 +54,13 @@ export const getWorld = async id => {
   		fields: ['*', "*.games", "*.games.*"]
   	})
   );
+  result.scenes = JSON.parse(result.scenes);
   return result;
 };
 
 export const createWorld = async data => {
   await client.setToken(localStorage.getItem('token'));
+  data.scenes = JSON.stringify(data.scenes);
   return client.request(createItem('Worlds', {
     status: "published",
     ...data
@@ -64,6 +69,7 @@ export const createWorld = async data => {
 
 export const updateWorld = async data => {
   await client.setToken(localStorage.getItem('token'));
+  data.scenes = JSON.stringify(data.scenes);
   const result = await client.request(updateSingleton('Worlds', data));
 };
 

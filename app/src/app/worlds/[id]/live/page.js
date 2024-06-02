@@ -22,11 +22,14 @@ const batchSize = 1;
 export default function EditWorld() {
   const router = useRouter();
   const dispatch = useGlobalDispatch();
-  const { currentWorld, scenes, currentScene } = useGlobalState();
+  const { currentWorld, currentScene } = useGlobalState();
   const [recording, setRecording] = useState(false);
+  const [scenes, setScenes] = useState([]);
   const [image, setImage] = useState(null);
   const [transcriptions, setTranscriptions] = useState([]);
   const [recorder] = useState(new AudioRecorder());
+
+  console.log("EditWorld scenes", scenes);
 
   const startRecording = () => {
     if (!recording) {
@@ -42,12 +45,13 @@ export default function EditWorld() {
     }
   };
 
-  
+
   const saveScene = (scene = {}, index) => {
     if (index !== undefined) {
       // update existing one
       scenes[index] = scene;
-      dispatch({ type: 'SET_SCENES', payload: scenes });
+      setScenes(scenes);
+      return dispatch({ type: 'SET_SCENES', payload: scenes });
     } else {
       // add new one
       const newScene = {
@@ -60,26 +64,30 @@ export default function EditWorld() {
         images: [],
         ...scene
       };
-      dispatch({ type: 'SET_SCENES', payload: [...scenes, newScene] });
+      setScenes([...scenes, newScene]);
+      return dispatch({ type: 'SET_SCENES', payload: [...scenes, newScene] });
       // dispatch({ type: 'SET_CURRENT_SCENE', payload: newScene }); // Activate this line here
     }
   };
 
 
-  const addImageToScene = (scenes = {},index, image) => {
+  const addImageToScene = (index, image) => {
+    console.log("addImageToScene scenes", scenes);
+    console.log("addImageToScene index, image", index, image);
     scenes[index].image = image;
     if (scenes[index].name) scenes[index].loading = false;
+    setScenes(scenes);
     dispatch({ type: 'SET_SCENES', payload: scenes });
     console.log("Updated scene with image");
   };
 
   // New batch round
-  const newBatch = () => {
+  const newBatch = async () => {
     const batch = transcriptions.slice(-batchSize);
     const index = scenes.length;
     console.log("newBatch", batch, index);
     // Set rich batch object
-    saveScene({
+    await saveScene({
       transcriptions: batch,
       index,
       name: `Scene #${index}`,
@@ -96,8 +104,7 @@ export default function EditWorld() {
     generateImage({ transcriptions: batch })
       .then(image => {
         console.log("image", image);
-        addImageToScene(scenes, index, image);
-  
+        addImageToScene(index, image);
       })
       .catch(console.error);
   };
@@ -116,12 +123,8 @@ export default function EditWorld() {
   };
 
   useEffect(() => {
-    if (currentWorld) {
-      // Save World object
-      currentWorld.scenes = JSON.stringify(scenes);
-      updateWorld(currentWorld);
-    }
-  }, [scenes]);
+    //
+  }, []);
 
   const handleSceneClick = (scene) => {
     // dispatch({ type: 'SET_CURRENT_SCENE', payload: scene });
@@ -211,8 +214,8 @@ export default function EditWorld() {
             )}
             <div className="p-3 rounded-lg mt-auto">
               <p>Fin de session : {currentScene.date ? new Date(currentScene.date).toLocaleString() : ''}</p>
-              <p>Transcript: {currentScene.transcriptions.join(', \n')}</p> 
-              <p>Resume: {currentScene.image}</p> 
+              <p>Transcript: {currentScene.transcriptions.join(', \n')}</p>
+              <p>Resume: {currentScene.image}</p>
               {/* Retour à la ligne nok */}
             </div>
           </div>

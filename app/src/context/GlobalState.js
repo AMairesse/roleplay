@@ -2,6 +2,7 @@
 
 // context/GlobalState.js
 import { createContext, useReducer, useContext } from 'react';
+import { updateWorld } from '@/utils/directus';
 
 const GlobalStateContext = createContext();
 const GlobalDispatchContext = createContext();
@@ -20,8 +21,12 @@ const reducer = (state, action) => {
         currentScene: action.payload,
       };
     case 'SET_SCENES':
+      // state.currentWorld.scenes = JSON.stringify(action.payload);
+      // console.log("state.currentWorld", state.currentWorld);
+      // updateWorld(state.currentWorld);
       return {
         ...state,
+        currentWorld: state.currentWorld,
         scenes: action.payload,
       };
     case 'SET_CURRENT_WORLD':
