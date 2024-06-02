@@ -10,11 +10,33 @@ async function pollForResult(resultUrl) {
     ).then((res) => res.json());
 
     if (pollResponse.status === "done") {
-      return pollResponse.result.transcription.full_transcript;
+      const dialog = getDialogFromJson(pollResponse.result);
+      console.log(dialog);
+      return dialog;
     } else {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
+}
+
+function getDialogFromJson(response) {
+  let dialog = "- ";
+  const utterances = response.transcription.utterances;
+  let speaker = 0;
+
+  utterances.forEach(utterance => {
+      // Retour à la ligne si changement de speaker
+      if (utterance.speaker !== speaker) {
+          dialog += "\n- ";
+          speaker = utterance.speaker;
+      }
+      // Ajout de l'utterance à la chaîne de dialogue
+      dialog += utterance.text + " ";
+  });
+
+  // Retour à la ligne pour terminer la chaîne de dialogue
+  dialog += "\n";
+  return dialog;
 }
 
 export const transcribeAudio = (context = "", audioBlob = null) =>
