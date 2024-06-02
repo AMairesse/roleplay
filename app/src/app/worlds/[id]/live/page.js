@@ -146,8 +146,8 @@ export default function EditWorld() {
             <div className="p-3 rounded-lg">
               {currentScene.place}
             </div>
-            <h1 className="text-2xl">{currentScene.name}</h1>
-            {currentScene.image && (
+            {/* <h1 className="text-2xl">{currentScene.name}</h1> */}
+            {/* {currentScene.image && (
               <div className="relative" style={{ padding: "2px" }}>
                 <div className="rounded-lg bg-cover block absolute" style={{
                   backgroundImage: `url(${currentScene.image})`,
@@ -164,17 +164,23 @@ export default function EditWorld() {
                   width: "calc(100% - 4px)"
                 }} />
               </div>
-            )}
+            )} */}
+            <div></div>
+            <div></div>
+            <div></div>
             <div className="p-3 rounded-lg mt-auto">
-              <p>Fin de session : {currentScene.date ? new Date(currentScene.date).toLocaleString() : ''}</p>
-              <p>Transcript: {currentScene.transcriptions.join(', \n')}</p>
-              <p>Resume: {currentScene.image}</p>
+              <p> Fin de session : {currentScene.date ? new Date(currentScene.date).toLocaleString() : ''}</p>
+              {/* <p>Transcript: {currentScene.transcriptions.join(', \n')}</p>
+              <p>Resume: {currentScene.image}</p> */}
               {/* Retour à la ligne nok */}
+              
             </div>
           </div>
+          
         </section>
       )}
       {currentScene && <Scene scene={currentScene} />}
+      
     </div>
   );
 }
