@@ -1,32 +1,25 @@
-import { useState } from 'react'
-import { Radio, RadioGroup } from '@headlessui/react'
-
-const product = {
-  name: 'Everyday Ruck Snack',
-  href: '#',
-  price: '$220',
-  description:
-    "Don't compromise on snack-carrying capacity with this lightweight and spacious bag. The drawstring top keeps all your favorite chips, crisps, fries, biscuits, crackers, and cookies secure.",
-  imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-04-featured-product-shot.jpg',
-  imageAlt: 'Model wearing light green backpack with black canvas straps and front zipper pouch.',
-  breadcrumbs: [
-    { id: 1, name: 'Travel', href: '#' },
-    { id: 2, name: 'Bags', href: '#' },
-  ],
-  sizes: [
-    { name: '18L', description: 'Perfect for a reasonable amount of snacks.' },
-    { name: '20L', description: 'Enough room for a serious amount of snacks.' },
-  ],
-}
-const reviews = { average: 4, totalCount: 1624 }
+import { useState } from 'react';
+import { Radio, RadioGroup } from '@headlessui/react';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function Scene({ scene }) {
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0])
+  // const [selectedSize, setSelectedSize] = useState(product.sizes[0])
   console.log("scene", scene);
+
+  const product = {
+    name: 'Passage du pont',
+    href: '#',
+    description:
+      "Résumé de la scène:",
+    //imageSrc: { scene.imageb64 },
+    imageAlt: 'Image de la scène',
+    breadcrumbs: [
+      { id: 1, name: scene.name, href: '#' },
+    ],
+  }
 
   return (
     <div className="bg-white">
@@ -66,46 +59,24 @@ export default function Scene({ scene }) {
               Product information
             </h2>
 
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
               <p className="text-lg text-gray-900 sm:text-xl">{product.price}</p>
-
-              <div className="ml-4 border-l border-gray-300 pl-4">
-                <h2 className="sr-only">Reviews</h2>
-                <div className="flex items-center">
-                  <div>
-                    <div className="flex items-center">
-                      {[0, 1, 2, 3, 4].map((rating) => (
-                        <i
-                          key={rating} className={classNames(
-                            reviews.average > rating ? 'text-yellow-400' : 'text-gray-300',
-                            'fas fa-star'
-                          )}
-                        />
-                      ))}
-                    </div>
-                    <p className="sr-only">{reviews.average} out of 5 stars</p>
-                  </div>
-                  <p className="ml-2 text-sm text-gray-500">{reviews.totalCount} reviews</p>
-                </div>
-              </div>
-            </div>
+            </div> */}
 
             <div className="mt-4 space-y-6">
-              <p className="text-base text-gray-500">{product.description}</p>
+              <p className="text-base text-gray-500">{product.description}{scene.transcriptions.join(', \n')}</p>
             </div>
 
             <div className="mt-6 flex items-center">
               <i className="fas fa-check text-green-500" />
-              <p className="ml-2 text-sm text-gray-500">In stock and ready to ship</p>
+              <p className="ml-2 text-sm text-gray-500">JSON_File: {scene.image}</p>
             </div>
           </section>
         </div>
 
         {/* Product image */}
         <div className="mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center">
-          <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg">
-            <img src={product.imageSrc} alt={product.imageAlt} className="h-full w-full object-cover object-center" />
-          </div>
+        <img src={`data:image/png;base64,${scene.imageb64}`} alt={product.imageAlt} className="h-full w-full object-cover object-center" />
         </div>
 
         {/* Product form */}
@@ -116,18 +87,15 @@ export default function Scene({ scene }) {
             </h2>
 
             <div className="mt-10">
-              <button
+              {/* <button
                 type="submit"
                 className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
               >
-                Add to bag
-              </button>
+                Interroger la scène: ....
+              </button> */}
+                          <div>
+              {/* <MistralComponent parentVariable={scene.transcriptions.join(', \n')} /> */}
             </div>
-            <div className="mt-6 text-center">
-              <a href="#" className="group inline-flex text-base font-medium">
-                <i className="fas fa-shield text-gray-400 group-hover:text-gray-500" />
-                <span className="text-gray-500 hover:text-gray-700">Lifetime Guarantee</span>
-              </a>
             </div>
           </section>
         </div>

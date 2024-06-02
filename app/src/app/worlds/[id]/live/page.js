@@ -14,8 +14,9 @@ import { transcribeAudio } from "@/utils/transcript";
 import { generateContext, generateImage } from "@/utils/mistral";
 import { updateWorld } from '@/utils/directus';
 import Scene from '@/components/scene';
+import generateResponse from '@/utils/gcp';
 
-const batchSize = 3;
+const batchSize = 1;
 
 export default function EditWorld() {
   const router = useRouter();
@@ -56,6 +57,7 @@ export default function EditWorld() {
         place: "",
         actors: [],
         images: [],
+        imageb64: [],
         ...scene
       };
       currentWorld.scenes.push(newScene);
@@ -64,10 +66,12 @@ export default function EditWorld() {
   };
 
 
-  const addImageToScene = (index, image) => {
+  const addImageToScene = (index, jsondata, imageb64) => {
     console.log("addImageToScene currentWorld", currentWorld);
-    console.log("addImageToScene index, image", index, image);
-    currentWorld.scenes[index].image = image;
+    console.log("addImageToScene index, jsondata", index, jsondata);
+    currentWorld.scenes[index].image = jsondata;
+    currentWorld.scenes[index].imageb64 = imageb64;
+    console.log("Dans addImageToScene imageb64", imageb64);
     if (currentWorld.scenes[index].name) currentWorld.scenes[index].loading = false;
     dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });
   };
@@ -95,7 +99,13 @@ export default function EditWorld() {
     generateImage({ transcriptions: batch })
       .then(image => {
         console.log("image", image);
-        addImageToScene(index, image);
+        generateResponse(image)
+          .then(response => {
+            console.log("response", response);
+            const imageb64 = response.result.image;
+            addImageToScene(index, image, imageb64);
+          })
+          .catch(console.error);
       })
       .catch(console.error);
   };
@@ -146,8 +156,8 @@ export default function EditWorld() {
             <div className="p-3 rounded-lg">
               {currentScene.place}
             </div>
-            <h1 className="text-2xl">{currentScene.name}</h1>
-            {currentScene.image && (
+            {/* <h1 className="text-2xl">{currentScene.name}</h1> */}
+            {/* {currentScene.image && (
               <div className="relative" style={{ padding: "2px" }}>
                 <div className="rounded-lg bg-cover block absolute" style={{
                   backgroundImage: `url(${currentScene.image})`,
@@ -164,17 +174,23 @@ export default function EditWorld() {
                   width: "calc(100% - 4px)"
                 }} />
               </div>
-            )}
+            )} */}
+            <div></div>
+            <div></div>
+            <div></div>
             <div className="p-3 rounded-lg mt-auto">
-              <p>Fin de session : {currentScene.date ? new Date(currentScene.date).toLocaleString() : ''}</p>
-              <p>Transcript: {currentScene.transcriptions.join(', \n')}</p>
-              <p>Resume: {currentScene.image}</p>
+              <p> Fin de session : {currentScene.date ? new Date(currentScene.date).toLocaleString() : ''}</p>
+              {/* <p>Transcript: {currentScene.transcriptions.join(', \n')}</p>
+              <p>Resume: {currentScene.image}</p> */}
               {/* Retour à la ligne nok */}
+              
             </div>
           </div>
+
         </section>
       )}
-      {false && <Scene scene={currentScene} />}
+      {currentScene && <Scene scene={currentScene} />}
+
     </div>
   );
 }
