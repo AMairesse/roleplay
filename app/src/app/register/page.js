@@ -1,4 +1,6 @@
+"use client";
 import { useState } from 'react';
+import { register } from '@/utils/directus';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -8,6 +10,11 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Logique de création de compte avec l'API Directus
+    register(email, password)
+      .then(response => {
+        console.log("response", response);
+      })
+      .catch(console.error);
   };
 
   return (
@@ -19,7 +26,7 @@ export default function Register() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full p-2 border"
+            className="mt-1 block w-full p-2 border text-gray-900"
           />
         </div>
         <div>
@@ -28,7 +35,7 @@ export default function Register() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full p-2 border"
+            className="mt-1 block w-full p-2 border text-gray-900"
           />
         </div>
         <div>
@@ -37,10 +44,16 @@ export default function Register() {
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="mt-1 block w-full p-2 border"
+            className="mt-1 block w-full p-2 border text-gray-900"
           />
         </div>
-        <button type="submit" className="w-full p-2 bg-blue-500 text-white">Register</button>
+        <button
+          type="submit"
+          className="w-full p-2 bg-blue-500 text-white disabled:opacity-20"
+          disabled={!password || password !== confirmPassword}
+        >
+          Register
+        </button>
       </form>
     </div>
   );

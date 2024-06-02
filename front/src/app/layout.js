@@ -1,7 +1,5 @@
 import { Inter } from "next/font/google";
-import { AuthProvider } from '@/utils/auth';
-import { GlobalProvider } from '@/context/GlobalState';
-
+// import { AuthProvider } from '../lib/auth';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -14,12 +12,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="fr">
-      <GlobalProvider>
-        <AuthProvider>
-          <body className={inter.className}>{children}</body>
-        </AuthProvider>
-      </GlobalProvider>
-      <script src="https://kit.fontawesome.com/64a6de1257.js" crossOrigin="anonymous"></script>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

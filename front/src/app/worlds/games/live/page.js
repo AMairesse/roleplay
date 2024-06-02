@@ -5,14 +5,14 @@ export default function WorldsGamesLive() {
   const [players, setPlayers] = useState([]);
   const [conditions, setConditions] = useState("Jour");
   const [place, setPlace] = useState("Tour du mage fou");
-  const [image, setImage] = useState('https://cdn.1j1ju.com/thumbs/game-lg/medias/36/28/18-pathfinder-le-jeu-de-role-boite-dinitiation-cover.jpeg');
+  const [image, setImage] = useState('https://assetsio.gnwcdn.com/pathfinder-2e-rpg-artwork.jpg?width=1600&height=900&fit=crop&quality=100&format=png&enable=upscale&auto=webp');
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* HEADER */}
       <div className="p-4 flex justify-between">
         <button>
-          <i className="fas fa-gear" />
+          Options
         </button>
         <ul className="flex flex-row gap-2">
           {players.map(player => (
@@ -33,16 +33,14 @@ export default function WorldsGamesLive() {
               <div className="rounded-lg bg-cover block absolute" style={{
                 backgroundImage: `url(${image})`,
                 opacity: "0.2",
-                top: "-2px",
-                left: "-2px",
+                top: "-4px",
+                left: "-4px",
                 height: "calc(100% + 4px)",
                 width: "calc(100% + 4px)"
               }} />
               <div className="top-0 left-0 rounded-lg h-full w-full bg-cover block absolute" style={{
                 backgroundImage: `url(${image})`,
-                margin: "2px",
-                height: "calc(100% - 4px)",
-                width: "calc(100% - 4px)"
+                margin: "2px"
               }} />
             </div>
           )}
