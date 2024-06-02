@@ -12,13 +12,12 @@ Fonctionnalités prévues :
 - Génération régulière d'un visuel de la partie
 
 
-# Architecture
+# Lancement de l'application
 
-Le frontend est en Node. Le backend est en Python.
+Dans le répertoire 'app' lancer :
+- npm install pour installer les dependances
+- npm run dev pour lancer l'application en mode développement
+
+Ouvrir la page http://localhost:3000/ dans votre navigateur
 
 
-
-
-# FAQ
-
-Utilisation de pyaudio sur MacOS  : nécessite d'installer "portaudio" par exemple par la commande "brew install portaudio"
