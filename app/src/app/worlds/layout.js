@@ -54,14 +54,13 @@ export default function ApplicationLayout({ events, children, navbar }) {
   const router = useRouter();
   const dispatch = useGlobalDispatch();
 
-  const { currentWorld, scenes, currentScene } = useGlobalState();
+  const { currentWorld, currentScene } = useGlobalState();
   const [worlds, setWorlds] = useState([]);
 
   const fetchWorlds = async () => {
     const data = await getWorlds();
     if (data.length) {
       dispatch({ type: 'SET_CURRENT_WORLD', payload: data[0] });
-      dispatch({ type: 'SET_SCENES', payload: JSON.parse(data[0].scenes) || [] });
     }
     setWorlds(data);
   };
@@ -112,7 +111,7 @@ export default function ApplicationLayout({ events, children, navbar }) {
 
           <SidebarBody>
             <SidebarSection>
-              {(scenes || []).map(scene => (
+              {(currentWorld?.scenes || []).map(scene => (
                 <SidebarItem
                   key={scene.index}
                   current={currentScene && scene.index === currentScene.index}

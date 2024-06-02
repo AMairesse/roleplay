@@ -3,9 +3,6 @@
 La ligne suivante permet la sélection d'une scène
 dispatch({ type: 'SET_CURRENT_SCENE', payload: newScene });
 
-La ligne suitante permets la mise à jours de toutes les scènes
-dispatch({ type: 'SET_SCENES', payload: [...scenes, newScene] });
-
 */
 "use client";
 
@@ -24,12 +21,9 @@ export default function EditWorld() {
   const dispatch = useGlobalDispatch();
   const { currentWorld, currentScene } = useGlobalState();
   const [recording, setRecording] = useState(false);
-  const [scenes, setScenes] = useState([]);
   const [image, setImage] = useState(null);
   const [transcriptions, setTranscriptions] = useState([]);
   const [recorder] = useState(new AudioRecorder());
-
-  console.log("EditWorld scenes", scenes);
 
   const startRecording = () => {
     if (!recording) {
@@ -49,42 +43,38 @@ export default function EditWorld() {
   const saveScene = (scene = {}, index) => {
     if (index !== undefined) {
       // update existing one
-      scenes[index] = scene;
-      setScenes(scenes);
-      return dispatch({ type: 'SET_SCENES', payload: scenes });
+      currentWorld.scenes[index] = scene;
+      dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });
     } else {
       // add new one
       const newScene = {
         type: "image",
         loading: false,
-        index: scenes.length,
+        index: (currentWorld.scenes || []).length,
         name: "",
         place: "",
         actors: [],
         images: [],
         ...scene
       };
-      setScenes([...scenes, newScene]);
-      return dispatch({ type: 'SET_SCENES', payload: [...scenes, newScene] });
-      // dispatch({ type: 'SET_CURRENT_SCENE', payload: newScene }); // Activate this line here
+      currentWorld.scenes.push(newScene);
+      return dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });
     }
   };
 
 
   const addImageToScene = (index, image) => {
-    console.log("addImageToScene scenes", scenes);
+    console.log("addImageToScene currentWorld", currentWorld);
     console.log("addImageToScene index, image", index, image);
-    scenes[index].image = image;
-    if (scenes[index].name) scenes[index].loading = false;
-    setScenes(scenes);
-    dispatch({ type: 'SET_SCENES', payload: scenes });
-    console.log("Updated scene with image");
+    currentWorld.scenes[index].image = image;
+    if (currentWorld.scenes[index].name) currentWorld.scenes[index].loading = false;
+    dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });
   };
 
   // New batch round
   const newBatch = async () => {
     const batch = transcriptions.slice(-batchSize);
-    const index = scenes.length;
+    const index = (currentWorld.scenes || []).length;
     console.log("newBatch", batch, index);
     // Set rich batch object
     await saveScene({
@@ -151,7 +141,7 @@ export default function EditWorld() {
 
       <aside className="sidebar">
         <div className="sidebar-body">
-          {(scenes || []).map((scene) => (
+          {(currentWorld?.scenes || []).map((scene) => (
             <div
               key={scene.index}
               className={`sidebar-item ${currentScene && scene.index === currentScene.index ? 'current' : ''}`}

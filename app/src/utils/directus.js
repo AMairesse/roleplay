@@ -42,7 +42,7 @@ export const getWorlds = async () => {
   	})
   );
   result.forEach(r => {
-    r.scenes = JSON.parse(r.scenes);
+    r.scenes = JSON.parse(r.scenes || []);
   })
   return result;
 };
@@ -54,7 +54,7 @@ export const getWorld = async id => {
   		fields: ['*', "*.games", "*.games.*"]
   	})
   );
-  result.scenes = JSON.parse(result.scenes);
+  result.scenes = JSON.parse(result.scenes || []);
   return result;
 };
 
@@ -63,6 +63,7 @@ export const createWorld = async data => {
   data.scenes = JSON.stringify(data.scenes);
   return client.request(createItem('Worlds', {
     status: "published",
+    scenes: JSON.stringify([]),
     ...data
   }));
 };

@@ -20,15 +20,6 @@ const reducer = (state, action) => {
         ...state,
         currentScene: action.payload,
       };
-    case 'SET_SCENES':
-      // state.currentWorld.scenes = JSON.stringify(action.payload);
-      // console.log("state.currentWorld", state.currentWorld);
-      // updateWorld(state.currentWorld);
-      return {
-        ...state,
-        currentWorld: state.currentWorld,
-        scenes: action.payload,
-      };
     case 'SET_CURRENT_WORLD':
       return {
         ...state,
@@ -44,15 +35,6 @@ const reducer = (state, action) => {
         ...state,
         token: action.payload,
       };
-      case 'ADD_IMAGE_TO_SCENE':
-        return {
-          ...state,
-          scenes: state.scenes.map((scene, index) =>
-            index === action.payload.index
-              ? { ...scene, images: [...scene.images, action.payload.image] }
-              : scene
-          ),
-        };
     // Ajoutez d'autres cas ici
     default:
       return state;
