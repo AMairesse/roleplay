@@ -174,7 +174,7 @@ export default function EditWorld() {
           </div>
         </section>
       )}
-      {currentScene && <Scene scene={currentScene} />}
+      {false && <Scene scene={currentScene} />}
     </div>
   );
 }
