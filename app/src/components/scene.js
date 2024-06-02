@@ -76,6 +76,11 @@ function CopyButton({ code }) {
 export default function Scene({ scene }) {
   // const [selectedSize, setSelectedSize] = useState(product.sizes[0])
   console.log("scene", scene);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
+  };
 
   const product = {
     name: 'Passage du pont',
@@ -135,9 +140,15 @@ export default function Scene({ scene }) {
               <p className="text-base text-gray-500">{product.description}<br />{scene.transcriptions.join(', \n')}</p>
             </div>
 
-            <div className="mt-4 space-y-6">
-              <p className="text-base text-gray-500">JSON_File: {scene.image}</p>
+            <div className="mt-6 flex items-center">
+              <i className="fas fa-check text-green-500" />
+              <p className="ml-2 text-sm text-gray-500">Eléments clés:</p>
+              <button onClick={toggleVisibility} className="ml-2 text-sm text-blue-500">
+                {isVisible ? 'Hide' : 'Show'}
+              </button>
             </div>
+            {isVisible && <p className="ml-2 text-sm text-gray-500">{scene.image}</p>}
+
           </section>
         </div>
 
@@ -165,9 +176,9 @@ export default function Scene({ scene }) {
               >
                 Interroger la scène: ....
               </button> */}
-                          <div>
-              {/* <MistralComponent parentVariable={scene.transcriptions.join(', \n')} /> */}
-            </div>
+              <div>
+                {/* <MistralComponent parentVariable={scene.transcriptions.join(', \n')} /> */}
+              </div>
             </div>
           </section>
         </div>
