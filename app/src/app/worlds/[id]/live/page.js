@@ -65,10 +65,11 @@ export default function EditWorld() {
   };
 
 
-  const addImageToScene = (index, image) => {
+  const addImageToScene = (index, jsondata, imageb64) => {
     console.log("addImageToScene currentWorld", currentWorld);
-    console.log("addImageToScene index, image", index, image);
-    currentWorld.scenes[index].image = image;
+    console.log("addImageToScene index, jsondata", index, jsondata);
+    currentWorld.scenes[index].image = jsondata;
+    currentWorld.scenes[index].imageb64 = imageb64;
     if (currentWorld.scenes[index].name) currentWorld.scenes[index].loading = false;
     dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });
   };
@@ -96,10 +97,10 @@ export default function EditWorld() {
     generateImage({ transcriptions: batch })
       .then(image => {
         console.log("image", image);
-        addImageToScene(index, image);
         generateResponse(image)
           .then(response => {
             console.log("response", response);
+            addImageToScene(index, image, response.image);
           })
           .catch(console.error);
       })

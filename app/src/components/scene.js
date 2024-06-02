@@ -14,7 +14,7 @@ export default function Scene({ scene }) {
     href: '#',
     description:
       "Résumé de la scène:",
-    imageSrc: 'https://cdn.1j1ju.com/thumbs/game-lg/medias/36/28/18-pathfinder-le-jeu-de-role-boite-dinitiation-cover.jpeg',
+    //imageSrc: { scene.imageb64 },
     imageAlt: 'Image de la scène',
     breadcrumbs: [
       { id: 1, name: scene.name, href: '#' },
@@ -77,7 +77,7 @@ export default function Scene({ scene }) {
         {/* Product image */}
         <div className="mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center">
           <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg">
-            <img src={product.imageSrc} alt={product.imageAlt} className="h-full w-full object-cover object-center" />
+            <img src={`data:image/png;base64,${scene.imageb64}`} alt={product.imageAlt} className="h-full w-full object-cover object-center" />
           </div>
         </div>
 
