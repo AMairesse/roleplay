@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { login } from '@/utils/directus';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image'
 
 export default function Login() {
   const router = useRouter();
@@ -40,11 +41,8 @@ export default function Login() {
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
-              <img
-                className="h-10 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                alt="Your Company"
-              />
+              <Image src={`/logo-dark.png`} width="120" height="120" className="block dark:hidden"/>
+              <Image src={`/logo-light.png`} width="120" height="120" className="hidden dark:block"/>
               <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-white">
                 Se connecter à votre compte
               </h2>
@@ -135,7 +133,7 @@ export default function Login() {
         <div className="relative hidden w-0 flex-1 lg:block">
           <img
             className="absolute inset-0 h-full w-full object-cover"
-            src="https://images.unsplash.com/photo-1496917756835-20cb06e75b4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
+            src="https://images.surferseo.art/3077e78a-4198-44f0-8126-7518a6cdae14.png"
             alt=""
           />
         </div>
