@@ -16,7 +16,7 @@ import { updateWorld } from '@/utils/directus';
 import Scene from '@/components/scene';
 import generateResponse from '@/utils/gcp';
 
-const batchSize = 3;
+const batchSize = 1;
 
 export default function EditWorld() {
   const router = useRouter();
@@ -58,6 +58,7 @@ export default function EditWorld() {
         place: "",
         actors: [],
         images: [],
+        imageb64: [],
         ...scene
       };
       currentWorld.scenes.push(newScene);
@@ -67,10 +68,12 @@ export default function EditWorld() {
   };
 
 
-  const addImageToScene = (index, image) => {
+  const addImageToScene = (index, jsondata, imageb64) => {
     console.log("addImageToScene currentWorld", currentWorld);
-    console.log("addImageToScene index, image", index, image);
-    currentWorld.scenes[index].image = image;
+    console.log("addImageToScene index, jsondata", index, jsondata);
+    currentWorld.scenes[index].image = jsondata;
+    currentWorld.scenes[index].imageb64 = imageb64;
+    console.log("Dans addImageToScene imageb64", imageb64);
     if (currentWorld.scenes[index].name) currentWorld.scenes[index].loading = false;
     dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });
   };
@@ -98,10 +101,11 @@ export default function EditWorld() {
     generateImage({ transcriptions: batch })
       .then(image => {
         console.log("image", image);
-        addImageToScene(index, image);
         generateResponse(image)
           .then(response => {
             console.log("response", response);
+            const imageb64 = response.result.image;
+            addImageToScene(index, image, imageb64);
           })
           .catch(console.error);
       })
@@ -184,11 +188,11 @@ export default function EditWorld() {
               
             </div>
           </div>
-          
+
         </section>
       )}
       {currentScene && <Scene scene={currentScene} />}
-      
+
     </div>
   );
 }

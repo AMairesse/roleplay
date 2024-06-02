@@ -20,12 +20,14 @@ export default function FormCreateWorlds({ onClose, world, ready, onSave }) {
   const dispatch = useGlobalDispatch();
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
+  const [style, setStyle] = useState('');
+  const [imageType, setImageType] = useState('');
   const [background, setBackground] = useState('');
 
   const handleSubmit = async (e) => {
     if(e) e.preventDefault();
     setLoading(true);
-    createWorld({ name, background })
+    createWorld({ name, background, style, image_type: imageType })
       .then(world => {
         setLoading(false);
         if (onSave) {
@@ -58,6 +60,42 @@ export default function FormCreateWorlds({ onClose, world, ready, onSave }) {
             placeholder="Catalyst"
             defaultValue={world?.name || ""}
             onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+      </section>
+
+      <Divider className="my-10" soft />
+
+      <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+        <div className="space-y-1">
+          <Subheading>Univers</Subheading>
+          <Text>C'est le thème de votre aventure. Sur quoi partez-vous? Steampunk ? Médiéval fantastique ?</Text>
+        </div>
+        <div>
+          <Input
+            aria-label="World style"
+            name="name"
+            placeholder="Médiéval fantastique"
+            defaultValue={world?.style || ""}
+            onChange={(e) => setStyle(e.target.value)}
+          />
+        </div>
+      </section>
+
+      <Divider className="my-10" soft />
+
+      <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+        <div className="space-y-1">
+          <Subheading>Direction artistique</Subheading>
+          <Text>Quel doit être le rendu des images rendues ? Sommes nous sur des photographies réalistes ou des peintures style Van Gogh ?</Text>
+        </div>
+        <div>
+          <Input
+            aria-label="World Name"
+            name="name"
+            placeholder="Illustration digital painting"
+            defaultValue={world?.image_type || ""}
+            onChange={(e) => setImageType(e.target.value)}
           />
         </div>
       </section>
