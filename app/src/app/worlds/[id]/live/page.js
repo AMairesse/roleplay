@@ -108,7 +108,7 @@ export default function EditWorld() {
   useEffect(() => {
     if (currentWorld) {
       // Save World object
-      currentWorld.scenes = scenes;
+      currentWorld.scenes = JSON.stringify(scenes);
       updateWorld(currentWorld);
     }
   }, [scenes]);

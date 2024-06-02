@@ -61,7 +61,7 @@ export default function ApplicationLayout({ events, children, navbar }) {
     const data = await getWorlds();
     if (data.length) {
       dispatch({ type: 'SET_CURRENT_WORLD', payload: data[0] });
-      dispatch({ type: 'SET_SCENES', payload: data[0].scenes || [] });
+      dispatch({ type: 'SET_SCENES', payload: JSON.parse(data[0].scenes) || [] });
     }
     setWorlds(data);
   };
