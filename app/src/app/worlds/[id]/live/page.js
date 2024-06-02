@@ -1,4 +1,4 @@
-  /** En l'état :
+/** En l'état :
 
 La ligne suivante permet la sélection d'une scène
 dispatch({ type: 'SET_CURRENT_SCENE', payload: newScene });
@@ -42,6 +42,7 @@ export default function EditWorld() {
     }
   };
 
+  
   const saveScene = (scene = {}, index) => {
     if (index !== undefined) {
       // update existing one
@@ -60,8 +61,16 @@ export default function EditWorld() {
         ...scene
       };
       dispatch({ type: 'SET_SCENES', payload: [...scenes, newScene] });
-      dispatch({ type: 'SET_CURRENT_SCENE', payload: newScene }); // Activate this line here
+      // dispatch({ type: 'SET_CURRENT_SCENE', payload: newScene }); // Activate this line here
     }
+  };
+
+
+  const addImageToScene = (scenes = {},index, image) => {
+    scenes[index].image = image;
+    if (scenes[index].name) scenes[index].loading = false;
+    dispatch({ type: 'SET_SCENES', payload: scenes });
+    console.log("Updated scene with image");
   };
 
   // New batch round
@@ -75,17 +84,20 @@ export default function EditWorld() {
       index,
       name: `Scene #${index}`,
       image: null,
-      date: new Date()
+      date: new Date(),
+      loading: true
     });
     // Parallelized
-    generateContext({ transcriptions: batch, message: "" })
-      .then(context => {
-        console.log("context", context);
-      })
-      .catch(console.error);
+    // generateContext({ transcriptions: batch, message: "" })
+    //   .then(context => {
+    //     console.log("context", context);
+    //   })
+    //   .catch(console.error);
     generateImage({ transcriptions: batch })
       .then(image => {
         console.log("image", image);
+        addImageToScene(scenes, index, image);
+  
       })
       .catch(console.error);
   };
@@ -197,9 +209,11 @@ export default function EditWorld() {
                 }} />
               </div>
             )}
-            <div className="p-3 rounded-lg">
+            <div className="p-3 rounded-lg mt-auto">
               <p>Fin de session : {currentScene.date ? new Date(currentScene.date).toLocaleString() : ''}</p>
-              <p>Resume: {currentScene.transcriptions.join(', ')}</p>
+              <p>Transcript: {currentScene.transcriptions.join(', \n')}</p> 
+              <p>Resume: {currentScene.image}</p> 
+              {/* Retour à la ligne nok */}
             </div>
           </div>
         </section>

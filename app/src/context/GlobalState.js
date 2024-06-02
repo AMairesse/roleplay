@@ -39,6 +39,15 @@ const reducer = (state, action) => {
         ...state,
         token: action.payload,
       };
+      case 'ADD_IMAGE_TO_SCENE':
+        return {
+          ...state,
+          scenes: state.scenes.map((scene, index) =>
+            index === action.payload.index
+              ? { ...scene, images: [...scene.images, action.payload.image] }
+              : scene
+          ),
+        };
     // Ajoutez d'autres cas ici
     default:
       return state;
