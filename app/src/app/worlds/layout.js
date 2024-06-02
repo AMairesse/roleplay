@@ -75,7 +75,7 @@ export default function ApplicationLayout({ events, children, navbar }) {
     }
 
     if (!currentWorld) fetchWorlds();
-  }, []);
+  }, [currentWorld]);
 
   return (
     <SidebarLayout

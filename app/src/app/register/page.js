@@ -11,9 +11,7 @@ export default function Register() {
     e.preventDefault();
     // Logique de création de compte avec l'API Directus
     register(email, password)
-      .then(response => {
-        console.log("response", response);
-      })
+      .then(() => {})
       .catch(console.error);
   };
 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createDirectus, authentication, rest, updateSingleton, registerUser, readItems, readMe, createItem, refresh, readItem } from '@directus/sdk';
+import { createDirectus, authentication, rest, updateSingleton, registerUser, readItems, readMe, createItem, refresh, readItem, deleteItem } from '@directus/sdk';
 
 const API_URL = "https://data.rpg.coraye.com/";
 let client = null
@@ -41,7 +41,6 @@ export const getWorlds = async () => {
 				}
   	})
   );
-  console.log("result", result);
   return result;
 };
 
@@ -52,7 +51,6 @@ export const getWorld = async id => {
   		fields: ['*', "*.games", "*.games.*"]
   	})
   );
-  console.log("result", result);
   return result;
 };
 

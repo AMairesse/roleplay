@@ -1,7 +1,8 @@
 "use client";
 import { useState } from 'react';
-import { createWorld, deleteWorld } from '@/utils/directus';
+import { createWorld } from '@/utils/directus';
 import { useRouter } from 'next/navigation';
+import { useGlobalDispatch } from '@/context/GlobalState';
 
 import { Button } from '@/components/button'
 import { Checkbox, CheckboxField } from '@/components/checkbox'
@@ -12,9 +13,11 @@ import { Input } from '@/components/input'
 import { Select } from '@/components/select'
 import { Text } from '@/components/text'
 import { Textarea } from '@/components/textarea'
+import DeleteModal from "@/components/Modal/delete-world";
 
-export default function FormCreateWorlds({ onDelete, onClose, world, ready, onSave }) {
+export default function FormCreateWorlds({ onClose, world, ready, onSave }) {
   const router = useRouter();
+  const dispatch = useGlobalDispatch();
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [background, setBackground] = useState('');
@@ -24,15 +27,19 @@ export default function FormCreateWorlds({ onDelete, onClose, world, ready, onSa
     setLoading(true);
     createWorld({ name, background })
       .then(world => {
-        console.log("OK", world);
         setLoading(false);
-        if (onSave) onSave(world);
+        if (onSave) {
+          dispatch({ type: 'SET_CURRENT_WORLD', payload: world });
+          onSave(world);
+        }
       })
       .catch(err => {
         console.error(err);
         setLoading(false);
       });
   };
+
+  const label = ready ? "Mettre à jour" : "Créer";
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-4xl">
@@ -78,9 +85,7 @@ export default function FormCreateWorlds({ onDelete, onClose, world, ready, onSa
 
       <div className="flex justify-end gap-4">
         {ready ? (
-          <Button plain onClick={onDelete}>
-            Supprimer
-          </Button>
+          <DeleteModal world={world} />
         ) : (
           <Button type="reset" plain onClick={onClose}>
             Annuler
@@ -96,7 +101,7 @@ export default function FormCreateWorlds({ onDelete, onClose, world, ready, onSa
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-        ) : "Mettre à jour"}
+        ) : label}
         </Button>
         {ready && (
           <Button

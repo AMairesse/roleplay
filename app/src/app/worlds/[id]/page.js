@@ -17,17 +17,11 @@ export default function EditWorld({ params }) {
     dispatch({ type: 'SET_CURRENT_WORLD', payload: data });
   };
 
-  const onDelete = () => deleteWorld(currentWorld.id);
-
   useEffect(() => {
     fetchWorld();
-  }, []);
+  }, [params]);
 
   return (
-    <FormCreateWorlds
-      onDelete={onDelete}
-      world={currentWorld}
-      ready
-    />
+    <FormCreateWorlds world={currentWorld} ready />
   );
 }
