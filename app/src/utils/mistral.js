@@ -1,4 +1,6 @@
 import MistralClient from '@mistralai/mistralai';
+// import generateResponse from './gcp';
+
 
 const apiKey = "nUIqldErbGUwC6Nrf5mlvJ5kYyCHjdFZ";
 const model = "open-mixtral-8x7b";

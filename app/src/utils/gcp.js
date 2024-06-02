@@ -81,3 +81,5 @@ async function generateResponse(data) {
     }
 }
 
+// module.exports.generateResponse = generateResponse;
+

@@ -198,8 +198,8 @@ export default function EditWorld() {
               </div>
             )}
             <div className="p-3 rounded-lg">
-              <p>Date: {currentScene.date ? new Date(currentScene.date).toLocaleString() : ''}</p>
-              <p>Transcriptions: {currentScene.transcriptions.join(', ')}</p>
+              <p>Fin de session : {currentScene.date ? new Date(currentScene.date).toLocaleString() : ''}</p>
+              <p>Resume: {currentScene.transcriptions.join(', ')}</p>
             </div>
           </div>
         </section>
