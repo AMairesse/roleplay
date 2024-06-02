@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import MistralComponent from './mistral';
 import TranscriptionList from './TranscriptionList';
 import MistralImg from './MistralImg';
-import 'tailwindcss/tailwind.css';
 
 export default function WorldsGamesLive() {
   const [players, setPlayers] = useState([]);

@@ -1,7 +1,6 @@
 // nUIqldErbGUwC6Nrf5mlvJ5kYyCHjdFZ
 import React, { useState } from 'react';
 import MistralClient from '@mistralai/mistralai';
-import 'tailwindcss/tailwind.css';
 
 const MistralComponent = ({ parentVariable }) => {
   const [content, setContent] = useState('');
@@ -91,4 +90,4 @@ const MistralComponent = ({ parentVariable }) => {
   );
 };
 
-export default MistralComponent;  
+export default MistralComponent;

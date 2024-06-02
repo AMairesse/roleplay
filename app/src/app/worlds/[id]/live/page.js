@@ -21,6 +21,16 @@ export default function EditWorld() {
   const [batches, setBatches] = useState([]);
   const [recorder] = useState(new AudioRecorder());
 
+  /** En l'état :
+
+  La ligne suivante permet la sélection d'une scène
+  dispatch({ type: 'SET_CURRENT_SCENE', payload: newScene });
+
+  La ligne suitante permets la mise à jours de toutes les scènes
+  dispatch({ type: 'SET_SCENES', payload: [...scenes, newScene] });
+
+  */
+
   const startRecording = () => {
     if (!recording) {
       recorder.start();

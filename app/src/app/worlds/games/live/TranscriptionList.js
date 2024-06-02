@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import 'tailwindcss/tailwind.css';
 
 // Helper function to generate a color based on the position
 const generateGradientColor = (index, total) => {

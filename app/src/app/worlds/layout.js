@@ -61,6 +61,7 @@ export default function ApplicationLayout({ events, children, navbar }) {
     const data = await getWorlds();
     if (data.length) {
       dispatch({ type: 'SET_CURRENT_WORLD', payload: data[0] });
+      dispatch({ type: 'SET_SCENES', payload: data[0].scenes || [] });
     }
     setWorlds(data);
   };
@@ -95,7 +96,7 @@ export default function ApplicationLayout({ events, children, navbar }) {
                   </DropdownItem>
                 ))}
                 <DropdownDivider />
-                <DropdownItem href="#">
+                <DropdownItem href="/worlds/create">
                   <i className="fas fa-plus mr-2" />
                   <DropdownLabel>Créer une nouvelle aventure</DropdownLabel>
                 </DropdownItem>
@@ -147,11 +148,11 @@ export default function ApplicationLayout({ events, children, navbar }) {
                   <i className="fas fa-shield-halved" />
                   <SidebarLabel>Politique de confidentialité</SidebarLabel>
                 </SidebarItem>
-              */}
               <SidebarItem href="#">
                 <i className="fas fa-comment-dots" />
                 <SidebarLabel>Donner son avis</SidebarLabel>
               </SidebarItem>
+              */}
             </SidebarSection>
           </SidebarBody>
 

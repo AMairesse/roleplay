@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import MistralClient from '@mistralai/mistralai';
-import 'tailwindcss/tailwind.css';
 
 const MistralImg = ({ transcripts }) => {
   const [response, setResponse] = useState('');
@@ -18,7 +17,7 @@ const MistralImg = ({ transcripts }) => {
     Contexte: Jeu de rôle type Pathfinder.
     Voici le transcript de l'audio:
     ${transcripts.join('\n')}.
-    
+
     Réponse courte JSON. N'invente rien. Réponse en français. Les éléments doivent décrits avec détail. Ne dit rien de plus.
     format json:
     Reponse: (
