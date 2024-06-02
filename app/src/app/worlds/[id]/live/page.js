@@ -16,7 +16,7 @@ import { updateWorld } from '@/utils/directus';
 import Scene from '@/components/scene';
 import generateResponse from '@/utils/gcp';
 
-const batchSize = 1;
+const batchSize = 3;
 
 export default function EditWorld() {
   const router = useRouter();
@@ -48,6 +48,7 @@ export default function EditWorld() {
       // update existing one
       currentWorld.scenes[index] = scene;
       dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });
+      dispatch({ type: 'SET_CURRENT_SCENE', payload: scene });
     } else {
       // add new one
       const newScene = {
@@ -63,6 +64,7 @@ export default function EditWorld() {
       };
       if (currentWorld?.scenes?.length) currentWorld.scenes.push(newScene);
       else currentWorld.scenes = [newScene];
+      dispatch({ type: 'SET_CURRENT_SCENE', payload: scene });
       return dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });
     }
   };
