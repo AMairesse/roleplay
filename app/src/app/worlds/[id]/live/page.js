@@ -16,7 +16,7 @@ import { updateWorld } from '@/utils/directus';
 import Scene from '@/components/scene';
 import generateResponse from '@/utils/gcp';
 
-const batchSize = 1;
+const batchSize = 3;
 
 export default function EditWorld() {
   const router = useRouter();
