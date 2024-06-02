@@ -76,9 +76,7 @@ export default function Scene({ scene }) {
 
         {/* Product image */}
         <div className="mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center">
-          <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg">
-            <img src={`data:image/png;base64,${scene.imageb64}`} alt={product.imageAlt} className="h-full w-full object-cover object-center" />
-          </div>
+        <img src={`data:image/png;base64,${scene.imageb64}`} alt={product.imageAlt} className="h-full w-full object-cover object-center" />
         </div>
 
         {/* Product form */}
