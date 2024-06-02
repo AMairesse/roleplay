@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import MistralComponent from './mistral';
 import TranscriptionList from './TranscriptionList';
-import MistralImg from './MistralImg';
+
 
 export default function WorldsGamesLive() {
   const [players, setPlayers] = useState([]);
@@ -11,15 +11,12 @@ export default function WorldsGamesLive() {
   const [place, setPlace] = useState("Tour du mage fou");
   const [image, setImage] = useState('https://cdn.1j1ju.com/thumbs/game-lg/medias/36/28/18-pathfinder-le-jeu-de-role-boite-dinitiation-cover.jpeg');
   const [transcriptions, setTranscriptions] = useState([]);
-  const [batch, setBatch] = useState([]);
+
 
   const handleNewTranscription = (newTranscription) => {
     setTranscriptions(prevTranscriptions => [...prevTranscriptions, newTranscription]);
   };
 
-  const handleBatchComplete = (lastTenTranscriptions) => {
-    setBatch(lastTenTranscriptions);
-  };
 
 
   useEffect(() => {
@@ -183,12 +180,7 @@ export default function WorldsGamesLive() {
               <MistralComponent parentVariable={transcriptions} />
             </div>
             <div>
-              <TranscriptionList transcriptions={transcriptions} onBatchComplete={handleBatchComplete} />
-              {batch.length === 10 && (
-                <div className="mt-5">
-                  <MistralImg transcripts={batch} />
-                </div>
-              )}
+              <TranscriptionList transcriptions={transcriptions}/>
             </div>
           </div>
         </div>
