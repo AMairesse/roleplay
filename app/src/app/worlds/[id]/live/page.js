@@ -43,6 +43,7 @@ export default function EditWorld() {
 
 
   const saveScene = (scene = {}, index) => {
+    if (!currentWorld) return false;
     if (index !== undefined) {
       // update existing one
       currentWorld.scenes[index] = scene;
@@ -53,7 +54,7 @@ export default function EditWorld() {
       const newScene = {
         type: "image",
         loading: false,
-        index: (currentWorld.scenes || []).length,
+        index: currentWorld?.scenes?.length || 0,
         name: "",
         place: "",
         actors: [],
@@ -61,7 +62,8 @@ export default function EditWorld() {
         imageb64: [],
         ...scene
       };
-      currentWorld.scenes.push(newScene);
+      if (currentWorld?.scenes?.length) currentWorld.scenes.push(newScene);
+      else currentWorld.scenes = [newScene];
       dispatch({ type: 'SET_CURRENT_SCENE', payload: scene });
       return dispatch({ type: 'SET_CURRENT_WORLD', payload: currentWorld });
     }
@@ -81,7 +83,7 @@ export default function EditWorld() {
   // New batch round
   const newBatch = async () => {
     const batch = transcriptions.slice(-batchSize);
-    const index = (currentWorld.scenes || []).length;
+    const index = currentWorld?.scenes?.length || 0;
     console.log("newBatch", batch, index);
     // Set rich batch object
     await saveScene({
@@ -185,7 +187,7 @@ export default function EditWorld() {
               {/* <p>Transcript: {currentScene.transcriptions.join(', \n')}</p>
               <p>Resume: {currentScene.image}</p> */}
               {/* Retour à la ligne nok */}
-              
+
             </div>
           </div>
 
