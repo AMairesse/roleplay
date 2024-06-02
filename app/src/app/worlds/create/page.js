@@ -8,6 +8,6 @@ export default function CreateWorld() {
   const router = useRouter()
 
   return (
-    <FormCreateWorlds onClose={() => router.back()} />
+    <FormCreateWorlds onClose={() => router.back()} onSave={data => router.push(`/worlds/${data.id}`)} />
   );
 }

@@ -13,7 +13,7 @@ import { Select } from '@/components/select'
 import { Text } from '@/components/text'
 import { Textarea } from '@/components/textarea'
 
-export default function FormCreateWorlds({ onDelete, onClose, world, ready }) {
+export default function FormCreateWorlds({ onDelete, onClose, world, ready, onSave }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
@@ -23,9 +23,10 @@ export default function FormCreateWorlds({ onDelete, onClose, world, ready }) {
     if(e) e.preventDefault();
     setLoading(true);
     createWorld({ name, background })
-      .then(result => {
-        console.log("OK", result);
+      .then(world => {
+        console.log("OK", world);
         setLoading(false);
+        if (onSave) onSave(world);
       })
       .catch(err => {
         console.error(err);
