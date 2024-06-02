@@ -101,7 +101,7 @@ export default function FormCreateWorlds({ onDelete, onClose, world, ready, onSa
         {ready && (
           <Button
             className="flex-row gap-2"
-            onClick={() => router.push(`/worlds/${currentWorld.id}/live`)}
+            onClick={() => router.push(`/worlds/${world.id}/live`)}
           >
           Démarrer la session
           <i className="fas fa-play" />
