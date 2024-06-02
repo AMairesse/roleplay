@@ -14,6 +14,7 @@ import { transcribeAudio } from "@/utils/transcript";
 import { generateContext, generateImage } from "@/utils/mistral";
 import { updateWorld } from '@/utils/directus';
 import Scene from '@/components/scene';
+import generateResponse from '@/utils/gcp';
 
 const batchSize = 3;
 
@@ -96,6 +97,11 @@ export default function EditWorld() {
       .then(image => {
         console.log("image", image);
         addImageToScene(index, image);
+        generateResponse(image)
+          .then(response => {
+            console.log("response", response);
+          })
+          .catch(console.error);
       })
       .catch(console.error);
   };
