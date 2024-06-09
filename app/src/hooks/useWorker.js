@@ -7,7 +7,7 @@ export function useWorker(messageEventHandler) {
 }
 
 function createWorker(messageEventHandler) {
-    const worker = new Worker(new URL("../worker.js", import.meta.url), {
+    const worker = new Worker(new URL("../app/worker.js", import.meta.url), {
         type: "module",
     });
     // Listen for messages from the Web Worker

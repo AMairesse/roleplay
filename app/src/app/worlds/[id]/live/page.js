@@ -15,6 +15,7 @@ import { generateContext, generateImage } from "@/utils/mistral";
 import { updateWorld } from '@/utils/directus';
 import Scene from '@/components/scene';
 import generateResponse from '@/utils/gcp';
+import { useTranscriber } from '@/hooks/useTranscriber';
 
 const batchSize = 3;
 
@@ -26,6 +27,7 @@ export default function EditWorld() {
   const [image, setImage] = useState(null);
   const [transcriptions, setTranscriptions] = useState([]);
   const [recorder] = useState(new AudioRecorder());
+  const transcriber = useTranscriber();
 
   const startRecording = () => {
     if (!recording) {
@@ -115,9 +117,15 @@ export default function EditWorld() {
   };
 
   recorder.onData = blob => {
-    transcribeAudio("", blob)
+    // Start transcription from audio blob
+    transcriber.start(blob);
+    // Wait for transcription
+    while (transcriber.isBusy) {
+      // Wait
+    }
+    // Get the result
+    transcriber.output
       .then(d => {
-        // Start transcription from audio blob
         setTranscriptions(prev => [...prev, d]);
         console.log("Batch size", transcriptions.length, transcriptions.length % batchSize);
         if (transcriptions.length % batchSize === 0 && transcriptions.length > 0) {
