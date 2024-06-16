@@ -1,4 +1,4 @@
-import Head from 'next/head';
+import { Metadata } from 'next'
 import Script from 'next/script';
 
 import { Inter } from "next/font/google";
@@ -9,17 +9,15 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Roleplai",
   description: "Du contenu en live pour vos parties de Jeux de Rôle",
-};
+}
+
 
 export default function RootLayout({ children }) {
   return (
     <html lang="fr">
-      <Head>
-
-      </Head>
       <GlobalProvider>
         <AuthProvider>
           <body className={inter.className}>{children}</body>

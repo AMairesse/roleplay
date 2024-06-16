@@ -1,16 +1,11 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { ProtectRoute } from '@/utils/auth';
-import { useRouter } from 'next/navigation';
-import { getWorlds, deleteWorld } from '@/utils/directus';
-import { useGlobalState, useGlobalDispatch } from '@/context/GlobalState';
-
-import FormCreateWorlds from "@/components/Forms/create-worlds";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useGlobalState } from "@/context/GlobalState";
 
 export default function Worlds() {
   const router = useRouter();
-  const dispatch = useGlobalDispatch();
   const { currentWorld } = useGlobalState();
 
   useEffect(() => {
@@ -34,8 +29,12 @@ export default function Worlds() {
           d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
         />
       </svg>
-      <h3 className="mt-2 text-sm font-semibold text-gray-900">Aucune aventure</h3>
-      <p className="mt-1 text-sm text-gray-500">Démarrez en créant votre première aventure.</p>
+      <h3 className="mt-2 text-sm font-semibold text-gray-900">
+        Aucune aventure
+      </h3>
+      <p className="mt-1 text-sm text-gray-500">
+        Démarrez en créant votre première aventure.
+      </p>
       <div className="mt-6">
         <button
           type="button"
