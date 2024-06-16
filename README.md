@@ -1,31 +1,30 @@
-# roleplay
+# Whisper Web
 
-Assistant pour le MJ
+ML-powered speech recognition directly in your browser! Built with [🤗 Transformers.js](https://github.com/xenova/transformers.js).
 
-# Contexte
+Check out the demo site [here](https://huggingface.co/spaces/Xenova/whisper-web). 
 
-Hackathon réalisé dans le cadre du https://shift-hackathon.com 2024 à Nantes.
+> [!IMPORTANT]  
+> Experimental WebGPU support has been added to [this branch](https://github.com/xenova/whisper-web/tree/experimental-webgpu) ([demo](https://huggingface.co/spaces/Xenova/whisper-webgpu)), if you'd like to run with GPU acceleration!
 
-# Objectif du projet
+https://github.com/xenova/whisper-web/assets/26504141/fb170d84-9678-41b5-9248-a112ecc74c27
 
-Fournir un assistant IA pour un maître de jeu afin d'enrichir l'experience de jeu.
+## Running locally
 
-Fonctionnalités prévues :
+1. Clone the repo and install dependencies:
 
-- Transcription de voix pour avoir au fil de l'eau les échanges entre les joueurs ==> Fait avec de la latence
-- Affichage d'un résumé de la partie mis à jour au fil de l'eau ==> non réalisé
-- Génération régulière d'un visuel de la partie ==> fait
+    ```bash
+    git clone https://github.com/xenova/whisper-web.git
+    cd whisper-web
+    npm install
+    ```
 
-# Lancement de l'application
+2. Run the development server:
 
-Lancer :
+    ```bash
+    npm run dev
+    ```
+    > Firefox users need to change the `dom.workers.modules.enabled` setting in `about:config` to `true` to enable Web Workers.
+    > Check out [this issue](https://github.com/xenova/whisper-web/issues/8) for more details.
 
-- `npm install` pour installer les dependances
-- `npm run dev` pour lancer l'application en mode développement
-
-Ouvrir la page http://localhost:3000/ dans votre navigateur
-
-# Remarques
-
-Le code est de qualité moyenne vu qu'il s'agissait d'un hackathon.
-En particulier les clefs de Google Cloud et autres services utilisés sont en clair dans le code (et donc dans ce repository...) mais ne vous inquiétez pas elles ne sont plus valides :-)
+3. Open the link (e.g., [http://localhost:5173/](http://localhost:5173/)) in your browser.
