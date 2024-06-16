@@ -22,3 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+.next
+
+# Environment variables
+.env
+
+# Apple photos cache
+.DS_Store

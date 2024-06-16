@@ -1,7 +1,0 @@
-import logo from "../../public/logo-dark.png";
-
-function App() {
-    return <img src={logo.src} />;
-}
-
-export default App;
