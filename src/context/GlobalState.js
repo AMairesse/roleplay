@@ -1,8 +1,8 @@
 "use client";
 
 // context/GlobalState.js
-import { createContext, useReducer, useContext } from 'react';
-import { updateWorld } from '@/utils/directus';
+import { createContext, useReducer, useContext } from "react";
+import { updateWorld } from "@/utils/directus";
 
 const GlobalStateContext = createContext();
 const GlobalDispatchContext = createContext();
@@ -10,29 +10,30 @@ const GlobalDispatchContext = createContext();
 const initialState = {
   user: null,
   token: null,
+  currentWorld: null,
   // Ajoutez d'autres états globaux ici
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'SET_CURRENT_SCENE':
+    case "SET_CURRENT_SCENE":
       return {
         ...state,
         currentScene: action.payload,
       };
-    case 'SET_CURRENT_WORLD':
+    case "SET_CURRENT_WORLD":
       console.log("SET_CURRENT_WORLD", action.payload);
       updateWorld(action.payload);
       return {
         ...state,
         currentWorld: action.payload,
       };
-    case 'SET_USER':
+    case "SET_USER":
       return {
         ...state,
         user: action.payload,
       };
-    case 'SET_TOKEN':
+    case "SET_TOKEN":
       return {
         ...state,
         token: action.payload,
