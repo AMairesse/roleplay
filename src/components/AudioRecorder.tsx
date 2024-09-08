@@ -105,7 +105,7 @@ export default function AudioRecorder(props: {
 
         return () => {
             if (stream) {
-                stream.getTracks().forEach((track) => track.stop());
+                (stream as MediaStream).getTracks().forEach((track) => track.stop());
             }
         };
     }, [recording]);
